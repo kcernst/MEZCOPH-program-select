@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UA Zuckerman College of Public Health — Program Finder</title>
+<style>
+  :root {
+    --red: #AB0520;
+    --red-dark: #8B0000;
+    --blue: #003366;
+    --blue-mid: #0C234B;
+    --white: #FFFFFF;
+    --off-white: #F7F5F2;
+    --grey: #E8E4DF;
+    --grey-dark: #9E9B96;
+    --shadow: 4px 4px 0px #000;
+    --shadow-lg: 6px 6px 0px #000;
+    --border: 2px solid #000;
+    --border-thick: 3px solid #000;
+    --font-display: 'Arial Black', 'Impact', sans-serif;
+    --font-body: 'Arial', 'Helvetica Neue', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--off-white);
+    color: #111;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--blue-mid);
+    border-bottom: var(--border-thick);
+    padding: 0;
+  }
+  .header-stripe {
+    background: var(--red);
+    height: 6px;
+  }
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+  }
+  .ua-badge {
+    background: var(--red);
+    color: white;
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 900;
+    padding: 6px 12px;
+    border: 2px solid white;
+    letter-spacing: 1px;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.5);
+    flex-shrink: 0;
+  }
+  .header-text h1 {
+    color: white;
+    font-family: var(--font-display);
+    font-size: clamp(13px, 2vw, 17px);
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+  .header-text p {
+    color: #a8c3e8;
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    background: var(--blue-mid);
+    border-bottom: var(--border-thick);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .progress-label {
+    color: #a8c3e8;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    min-width: 80px;
+  }
+  .progress-track {
+    flex: 1;
+    height: 10px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--red);
+    transition: width 0.4s ease;
+  }
+  .progress-count {
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    min-width: 55px;
+    text-align: right;
+  }
+
+  /* ── MAIN WRAPPER ── */
+  .main {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  /* ── SCREEN BASE ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── INTRO SCREEN ── */
+  .intro-hero {
+    background: var(--red);
+    border: var(--border-thick);
+    box-shadow: var(--shadow-lg);
+    padding: 32px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .intro-hero::before {
+    content: '';
+    position: absolute;
+    right: -40px; top: -40px;
+    width: 180px; height: 180px;
+    border: 30px solid rgba(255,255,255,0.08);
+    border-radius: 50%;
+  }
+  .intro-hero::after {
+    content: '';
+    position: absolute;
+    right: 20px; top: 20px;
+    width: 80px; height: 80px;
+    border: 20px solid rgba(255,255,255,0.08);
+    border-radius: 50%;
+  }
+  .intro-hero h2 {
+    color: white;
+    font-family: var(--font-display);
+    font-size: clamp(24px, 5vw, 40px);
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .intro-hero p {
+    color: rgba(255,255,255,0.88);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 520px;
+    position: relative;
+  }
+
+  .level-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 520px) {
+    .level-grid { grid-template-columns: 1fr; }
+  }
+  .level-card {
+    background: white;
+    border: var(--border-thick);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    text-align: left;
+    position: relative;
+  }
+  .level-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #000;
+  }
+  .level-card:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 #000;
+  }
+  .level-card .badge {
+    display: inline-block;
+    background: var(--blue-mid);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    margin-bottom: 10px;
+  }
+  .level-card h3 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .level-card p {
+    font-size: 13px;
+    color: #444;
+    line-height: 1.5;
+  }
+  .level-card .arrow {
+    position: absolute;
+    bottom: 16px; right: 16px;
+    width: 32px; height: 32px;
+    background: var(--red);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    font-weight: 900;
+    border: 2px solid #000;
+  }
+
+  /* ── QUESTION SCREEN ── */
+  .q-header {
+    background: var(--blue-mid);
+    border: var(--border-thick);
+    box-shadow: var(--shadow);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+  }
+  .q-header .level-tag {
+    display: inline-block;
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .q-header h2 {
+    color: white;
+    font-family: var(--font-display);
+    font-size: clamp(18px, 3.5vw, 26px);
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .question-block {
+    background: white;
+    border: var(--border-thick);
+    box-shadow: var(--shadow);
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  .question-number {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--red);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+  }
+  .question-text {
+    font-size: clamp(15px, 2.5vw, 18px);
+    font-weight: 700;
+    line-height: 1.45;
+    margin-bottom: 20px;
+    color: #111;
+  }
+
+  .options-grid {
+    display: grid;
+    gap: 10px;
+  }
+  .option-btn {
+    background: var(--off-white);
+    border: var(--border);
+    padding: 13px 16px;
+    text-align: left;
+    font-size: 14px;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.1s, box-shadow 0.1s, transform 0.1s;
+    line-height: 1.4;
+    color: #111;
+    box-shadow: 2px 2px 0 #000;
+    position: relative;
+  }
+  .option-btn:hover {
+    background: var(--grey);
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 #000;
+  }
+  .option-btn.selected {
+    background: var(--blue-mid);
+    color: white;
+    border-color: var(--blue-mid);
+    box-shadow: 2px 2px 0 #000;
+  }
+  .option-btn.selected::after {
+    content: '✓';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 900;
+    font-size: 16px;
+    color: var(--red);
+    background: white;
+    width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid #000;
+  }
+
+  /* Multi-select note */
+  .multi-note {
+    font-size: 11px;
+    color: var(--grey-dark);
+    font-style: italic;
+    margin-bottom: 12px;
+  }
+
+  /* ── NAV BUTTONS ── */
+  .nav-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+  }
+  .btn {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 24px;
+    border: var(--border-thick);
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    box-shadow: var(--shadow);
+    flex-shrink: 0;
+  }
+  .btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #000;
+  }
+  .btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 #000;
+  }
+  .btn-primary {
+    background: var(--red);
+    color: white;
+  }
+  .btn-secondary {
+    background: white;
+    color: #111;
+  }
+  .btn-blue {
+    background: var(--blue-mid);
+    color: white;
+  }
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: 2px 2px 0 #000 !important;
+  }
+
+  /* ── RESULTS SCREEN ── */
+  .results-header {
+    background: var(--blue-mid);
+    border: var(--border-thick);
+    box-shadow: var(--shadow-lg);
+    padding: 24px 28px;
+    margin-bottom: 24px;
+  }
+  .results-header .tag {
+    display: inline-block;
+    background: var(--red);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+  .results-header h2 {
+    color: white;
+    font-family: var(--font-display);
+    font-size: clamp(20px, 4vw, 32px);
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+  .results-header p {
+    color: #a8c3e8;
+    font-size: 13px;
+    margin-top: 8px;
+  }
+
+  .result-card {
+    background: white;
+    border: var(--border-thick);
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .result-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #000;
+  }
+  .result-card-top {
+    display: flex;
+    align-items: stretch;
+  }
+  .rank-badge {
+    background: var(--red);
+    color: white;
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 900;
+    min-width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: var(--border-thick);
+    flex-shrink: 0;
+    padding: 0 4px;
+  }
+  .result-card.rank-1 .rank-badge { background: var(--red); }
+  .result-card.rank-2 .rank-badge { background: var(--blue-mid); }
+  .result-card.rank-3 .rank-badge { background: #4a5568; }
+  .result-card.rank-other .rank-badge { background: #6b7280; }
+
+  .result-main {
+    flex: 1;
+    padding: 16px 20px;
+  }
+  .result-program-type {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--grey-dark);
+    margin-bottom: 4px;
+  }
+  .result-program-name {
+    font-family: var(--font-display);
+    font-size: clamp(14px, 2.5vw, 18px);
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    color: #111;
+  }
+  .match-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .match-bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--grey);
+    border: 1px solid #ccc;
+  }
+  .match-bar-fill {
+    height: 100%;
+    transition: width 1s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+  }
+  .rank-1 .match-bar-fill { background: var(--red); }
+  .rank-2 .match-bar-fill { background: var(--blue-mid); }
+  .rank-3 .match-bar-fill { background: #4a5568; }
+  .rank-other .match-bar-fill { background: #9ca3af; }
+
+  .match-pct {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 900;
+    min-width: 52px;
+    text-align: right;
+  }
+  .rank-1 .match-pct { color: var(--red); }
+  .rank-2 .match-pct { color: var(--blue-mid); }
+  .rank-other .match-pct { color: #6b7280; }
+
+  /* expand detail */
+  .result-detail {
+    border-top: var(--border);
+    padding: 14px 20px;
+    background: var(--off-white);
+    display: none;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #333;
+  }
+  .result-detail.open { display: block; }
+  .result-detail h4 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--red);
+    margin-bottom: 6px;
+    margin-top: 10px;
+  }
+  .result-detail h4:first-child { margin-top: 0; }
+  .result-detail ul { padding-left: 18px; }
+  .result-detail ul li { margin-bottom: 4px; }
+  .result-detail a {
+    color: var(--blue-mid);
+    font-weight: 700;
+  }
+  .toggle-detail-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--blue-mid);
+    padding: 8px 20px;
+    border-top: var(--border);
+    width: 100%;
+    text-align: left;
+    transition: background 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .toggle-detail-btn:hover { background: #e8f0fc; }
+  .toggle-arrow { display: inline-block; transition: transform 0.2s; }
+  .toggle-detail-btn.open .toggle-arrow { transform: rotate(90deg); }
+
+  /* ── WHY SECTION ── */
+  .why-section {
+    background: var(--grey);
+    border: var(--border);
+    padding: 16px 20px;
+    margin-top: 24px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #444;
+  }
+  .why-section strong { color: #111; }
+
+  /* ── DISCLAIMER ── */
+  .disclaimer {
+    background: #FFF3CD;
+    border: 2px solid #856404;
+    box-shadow: 3px 3px 0 #856404;
+    padding: 14px 18px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #533f03;
+    margin-top: 20px;
+  }
+  .disclaimer strong { font-weight: 700; }
+
+  /* ── RESTART ── */
+  .restart-row {
+    margin-top: 28px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* ── LOADING SCREEN ── */
+  .loading-screen {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .loading-screen h2 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    color: var(--blue-mid);
+  }
+  .pulse-ring {
+    width: 60px; height: 60px;
+    border: 5px solid var(--red);
+    border-top-color: transparent;
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Accessibility */
+  :focus-visible { outline: 3px solid var(--red); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+
+  @media (max-width: 600px) {
+    .main { padding: 20px 12px 50px; }
+    .intro-hero { padding: 20px; }
+    .question-block { padding: 18px; }
+    .nav-row { flex-direction: column-reverse; }
+    .btn { text-align: center; }
+    .result-main { padding: 12px 14px; }
+    .rank-badge { min-width: 48px; font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-stripe"></div>
+  <div class="header-inner">
+    <div class="ua-badge">UA</div>
+    <div class="header-text">
+      <h1>Mel & Enid Zuckerman College of Public Health</h1>
+      <p>Program Fit Finder · University of Arizona</p>
+    </div>
+  </div>
+</header>
+
+<div class="progress-wrap" id="progressWrap" style="display:none">
+  <div class="progress-label" id="progressLabel">Step 1</div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-count" id="progressCount"></div>
+</div>
+
+<div class="main">
+
+  <!-- ══ SCREEN 1: INTRO ══ -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro-hero">
+      <h2>Find Your<br>Public Health Path</h2>
+      <p>Answer a few questions about your interests, career goals, and background. We'll rank every degree program in the College of Public Health by how well it fits <em>you</em>.</p>
+    </div>
+    <p style="margin-bottom:16px; font-weight:700; font-size:14px; text-transform:uppercase; letter-spacing:0.5px; color: #555;">Which level are you exploring?</p>
+    <div class="level-grid">
+      <button class="level-card" onclick="startSurvey('undergrad')">
+        <div class="badge">Undergraduate</div>
+        <h3>Bachelor's Degrees</h3>
+        <p>BS in Public Health (6 emphases) and BA in Wellness & Health Promotion Practice (3 emphases). For incoming or current undergraduates.</p>
+        <div class="arrow">→</div>
+      </button>
+      <button class="level-card" onclick="startSurvey('grad')">
+        <div class="badge">Graduate</div>
+        <h3>Master's & Doctoral</h3>
+        <p>MPH (7 concentrations), MS, PhD, and DrPH programs. For students with a bachelor's degree seeking advanced study.</p>
+        <div class="arrow">→</div>
+      </button>
+    </div>
+    <div class="disclaimer">
+      <strong>Note:</strong> This tool provides unofficial guidance only. Program offerings, requirements, and availability may change. Always consult the <a href="https://publichealth.arizona.edu/programs" target="_blank" style="color:#533f03">official COPH website</a> and an academic advisor before making enrollment decisions.
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 2: QUESTIONS ══ -->
+  <div class="screen" id="screen-questions">
+    <div class="q-header">
+      <div class="level-tag" id="qLevelTag"></div>
+      <h2 id="qTitle"></h2>
+    </div>
+    <div id="questionContainer"></div>
+    <div class="nav-row">
+      <button class="btn btn-primary" id="btnNext" onclick="nextQuestion()">Next →</button>
+      <button class="btn btn-secondary" id="btnBack" onclick="prevQuestion()">← Back</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 3: LOADING ══ -->
+  <div class="screen" id="screen-loading">
+    <div class="loading-screen">
+      <div class="pulse-ring"></div>
+      <h2>Analyzing Your Fit</h2>
+      <p style="color:#555; font-size:14px">Matching your responses to every program…</p>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 4: RESULTS ══ -->
+  <div class="screen" id="screen-results">
+    <div class="results-header">
+      <div class="tag" id="resultLevelTag"></div>
+      <h2>Your Program Rankings</h2>
+      <p id="resultSubhead"></p>
+    </div>
+    <div id="resultsContainer"></div>
+    <div class="disclaimer">
+      <strong>This is a self-guided exploration tool, not official advising.</strong> Scores are based on your survey responses and broad program characteristics. Contact the <a href="https://publichealth.arizona.edu/office-student-affairs" target="_blank" style="color:#533f03">Office of Student Affairs</a> or <a href="mailto:COPH-undergrad@arizona.edu" style="color:#533f03">COPH-undergrad@arizona.edu</a> for personalized guidance.
+    </div>
+    <div class="restart-row">
+      <button class="btn btn-primary" onclick="restart()">Start Over</button>
+      <button class="btn btn-blue" onclick="switchLevel()">Try Other Level</button>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// ══════════════════════════════════════════════
+//  PROGRAM DATA
+// ══════════════════════════════════════════════
+
+const UNDERGRAD_PROGRAMS = [
+  {
+    id: 'bs_global',
+    degree: 'BS in Public Health',
+    name: 'Global Health Emphasis',
+    tags: ['global','international','travel','languages','policy','field work','cross-cultural'],
+    description: 'Focuses on health issues in an international context — disease, equity, and systems across borders. Ideal for students drawn to global health crises, international NGOs, or the Peace Corps.',
+    careers: ['Global Health Officer','International Health Consultant','NGO Program Manager','Peace Corps','WHO/PAHO staff'],
+    skills: ['Cross-cultural communication','International health policy','Epidemiological methods','Field work abroad'],
+    link: 'https://publichealth.arizona.edu/programs/undergraduate/bs'
+  },
+  {
+    id: 'bs_env',
+    degree: 'BS in Public Health',
+    name: 'Environmental & Occupational Health Emphasis',
+    tags: ['environment','climate','toxicology','workplace safety','science','lab','data','STEM'],
+    description: 'Examines how environmental exposures and workplace hazards affect human health. Blends biology, chemistry, and policy for students interested in EPA work, industrial hygiene, or climate health.',
+    careers: ['Environmental Health Specialist','Industrial Hygienist','Environmental Consultant','EPA/OSHA Inspector'],
+    skills: ['Exposure assessment','Toxicology','Regulatory compliance','Environmental risk assessment'],
+    link: 'https://publichealth.arizona.edu/programs/undergraduate/bs'
+  },
+  {
+    id: 'bs_onehealth',
+    degree: 'BS in Public Health',
+    name: 'One Health Emphasis',
+    tags: ['animals','environment','zoonosis','ecology','science','lab','STEM','global','wildlife'],
+    description: 'Explores the deep connections between human, animal, and environmental health. New and innovative — perfect for students interested in veterinary science, ecology, or emerging infectious diseases.',
+    careers: ['One Health Specialist','Wildlife Disease Researcher','Zoonotic Disease Investigator','Conservation Health Officer'],
+    skills: ['Zoonotic disease surveillance','Ecological fieldwork','Human-animal interface','Environmental sampling'],
+    link: 'https://publichealth.arizona.edu/programs/undergraduate/bs'
+  },
+  {
+    id: 'bs_systems',
+    degree: 'BS in Public Health',
+    name: 'Health Systems Theory Emphasis',
+    tags: ['health care','policy','management','systems','economics','hospital','administration','data'],
+    description: 'Analyzes how health care systems are organized, financed, and managed. Ideal for students aiming for health administration, hospital management, or health policy roles.',
+    careers: ['Health Systems Analyst','Hospital Administrator','Health Policy Aide','Insurance/Managed Care Analyst'],
+    skills: ['Health economics','Systems thinking','Health policy analysis','Organizational management'],
+    link: 'https://publichealth.arizona.edu/programs/undergraduate/bs'
+  },
+  {
+    id: 'bs_practice',
+    degree: 'BS in Public Health',
+    name: 'Public Health Practice Emphasis',
+    tags: ['community','fieldwork','programs','service','generalist','internship','communication','grassroots'],
+    description: 'A broad, practice-focused emphasis covering the core competencies of public health. Great for generalists who want hands-on community experience and career flexibility across sectors.',
+    careers: ['Community Health Worker','Public Health Generalist','County Health Dept. Staff','Health Educator','Program Coordinator'],
+    skills: ['Community needs assessment','Program planning','Health communication','Interdisciplinary collaboration'],
+    link: 'https://publichealth.arizona.edu/programs/undergraduate/bs'
+  },
+  {
+    id: 'bs_biostat',
+    degree: 'BS in Public Health',
+    name: 'Biostatistics Emphasis',
+    tags: ['math','data','statistics','research','STEM','quantitative','coding','epidemiology','analysis'],
+    description: 'Provides rigorous training in statistical methods applied to public health data. Ideal for quantitatively minded students heading toward data science, clinical trials, or research careers.',
+    careers: ['Biostatistician','Data Analyst','Research Coordinator','Epidemiologist (support)','Clinical Trials Analyst'],
+    skills: ['Statistical software (R, SAS, SPSS)','Study design','Data visualization','Quantitative reasoning'],
+    link: 'https://publichealth.arizona.edu/programs/undergraduate/bs'
+  },
+  {
+    id: 'ba_wellness',
+    degree: 'BA in Wellness & Health Promotion Practice',
+    name: 'Worksite/Corporate Wellness Emphasis',
+    tags: ['wellness','fitness','behavior','workplace','corporate','coaching','communication','people'],
+    description: 'Prepares graduates to design and run wellness programs in corporate and worksite settings. Ideal for people-oriented students who want to promote healthy behaviors in professional environments.',
+    careers: ['Corporate Wellness Coordinator','Employee Wellness Consultant','Health Coach','Benefits Specialist'],
+    skills: ['Behavior change theory','Program design','Health coaching','Worksite intervention'],
+    link: 'https://publichealth.arizona.edu/programs/undergraduate/ba'
+  },
+  {
+    id: 'ba_community',
+    degree: 'BA in Wellness & Health Promotion Practice',
+    name: 'Community & Population Health Promotion Emphasis',
+    tags: ['community','grassroots','equity','diversity','social','culture','people','programs','outreach'],
+    description: 'Focuses on promoting health at the community level, with attention to equity and cultural competence. Best for students passionate about working with underserved populations and community organizations.',
+    careers: ['Community Health Educator','Health Outreach Coordinator','Nonprofit Health Program Manager','Social Worker (health focus)'],
+    skills: ['Health education design','Cultural competence','Community organizing','Social determinants of health'],
+    link: 'https://publichealth.arizona.edu/programs/undergraduate/ba'
+  },
+  {
+    id: 'ba_school',
+    degree: 'BA in Wellness & Health Promotion Practice',
+    name: 'School Health Emphasis',
+    tags: ['children','education','teaching','school','youth','behavior','prevention','family'],
+    description: 'Trains health professionals to work in K–12 school settings — from curriculum to counseling. Ideal for students who want to shape healthy habits in children and work alongside educators.',
+    careers: ['School Health Educator','Student Wellness Coordinator','Youth Health Program Designer','Health Teacher'],
+    skills: ['Child and adolescent health','Curriculum development','School policy','Prevention programs'],
+    link: 'https://publichealth.arizona.edu/programs/undergraduate/ba'
+  }
+];
+
+const GRAD_PROGRAMS = [
+  {
+    id: 'mph_epi',
+    degree: 'Master of Public Health (MPH)',
+    name: 'Epidemiology Concentration',
+    tags: ['research','data','statistics','disease','surveillance','quantitative','STEM','lab','clinical'],
+    description: 'Trains students in the methods of disease surveillance, outbreak investigation, and population-based research. Core MPH with a strong quantitative foundation.',
+    careers: ['Epidemiologist','Disease Surveillance Officer','CDC/ADHS Researcher','Public Health Scientist'],
+    skills: ['Epidemiologic methods','Biostatistics','Study design','Surveillance systems','SAS/R'],
+    link: 'https://publichealth.arizona.edu/programs/graduate/mph'
+  },
+  {
+    id: 'mph_biostat',
+    degree: 'Master of Public Health (MPH)',
+    name: 'Biostatistics Concentration',
+    tags: ['math','data','statistics','research','quantitative','coding','clinical trials','STEM'],
+    description: 'Advanced training in statistical methods for health research. Ideal for students with strong mathematical backgrounds aiming for research, consulting, or data-science roles.',
+    careers: ['Biostatistician','Statistical Analyst','Clinical Trials Statistician','Research Methods Consultant'],
+    skills: ['Advanced statistics','R / SAS / SPSS','Machine learning for health','Clinical research methods'],
+    link: 'https://publichealth.arizona.edu/programs/graduate/mph'
+  },
+  {
+    id: 'mph_envhealth',
+    degree: 'Master of Public Health (MPH)',
+    name: 'Environmental & Occupational Health Concentration',
+    tags: ['environment','climate','toxicology','workplace','science','lab','STEM','regulation','policy'],
+    description: 'Graduate-level study of environmental exposures, workplace hazards, and regulatory health policy. Bridges lab science and public health action.',
+    careers: ['Environmental Health Director','Industrial Hygienist','Risk Assessment Specialist','EPA/State Agency Professional'],
+    skills: ['Advanced toxicology','Environmental epidemiology','Exposure assessment','Health risk communication'],
+    link: 'https://publichealth.arizona.edu/programs/graduate/mph'
+  },
+  {
+    id: 'mph_hebs',
+    degree: 'Master of Public Health (MPH)',
+    name: 'Health Education & Behavioral Sciences Concentration',
+    tags: ['behavior','community','education','communication','programs','people','equity','social','culture'],
+    description: 'Applies social and behavioral science theories to design health education programs. Ideal for practitioners focused on changing behaviors and reducing health disparities.',
+    careers: ['Health Education Specialist (CHES)','Community Health Program Director','Health Communication Officer','Behavioral Health Consultant'],
+    skills: ['Behavior change theories','Program evaluation','Health literacy','Qualitative methods'],
+    link: 'https://publichealth.arizona.edu/programs/graduate/mph'
+  },
+  {
+    id: 'mph_mch',
+    degree: 'Master of Public Health (MPH)',
+    name: 'Family & Child Health Concentration',
+    tags: ['family','children','maternal','reproductive','clinical','community','policy','social','equity'],
+    description: 'Focuses on the health of women, children, families, and reproductive populations. Strong intersections with social work, clinical practice, and health equity advocacy.',
+    careers: ['MCH Program Coordinator','Title V Agency Professional','School Health Director','Maternal Health Policy Advisor'],
+    skills: ['MCH epidemiology','Reproductive health policy','Family-centered care','Community health assessment'],
+    link: 'https://publichealth.arizona.edu/programs/graduate/mph'
+  },
+  {
+    id: 'mph_policy',
+    degree: 'Master of Public Health (MPH)',
+    name: 'Public Health Policy & Management Concentration',
+    tags: ['policy','management','leadership','administration','advocacy','health care','systems','economics','government'],
+    description: 'Prepares public health leaders to navigate government systems, manage programs, and advocate for policy change. Ideal for students aiming for leadership in agencies or health-related organizations.',
+    careers: ['Public Health Director','Policy Analyst','Health Agency Administrator','Legislative Health Aide','Nonprofit Director'],
+    skills: ['Health policy analysis','Public administration','Grant writing','Strategic planning','Public health law'],
+    link: 'https://publichealth.arizona.edu/programs/graduate/mph'
+  },
+  {
+    id: 'mph_global',
+    degree: 'Master of Public Health (MPH)',
+    name: 'Global Health Concentration',
+    tags: ['global','international','travel','languages','equity','development','field work','cross-cultural','policy'],
+    description: 'Addresses health challenges in low- and middle-income countries and globally. Includes field placement opportunities and international partnerships.',
+    careers: ['Global Health Program Officer','International NGO Coordinator','WHO/PAHO Staff','USAID Public Health Advisor'],
+    skills: ['Global health systems','International health law','Cross-cultural competency','Field epidemiology'],
+    link: 'https://publichealth.arizona.edu/programs/graduate/mph'
+  },
+  {
+    id: 'ms_epi',
+    degree: 'Master of Science (MS)',
+    name: 'Epidemiology',
+    tags: ['research','data','statistics','science','quantitative','STEM','academic','lab','thesis','PhD prep'],
+    description: 'A research-intensive MS with a thesis. Provides deep methodological training in epidemiology, ideal for students planning to pursue doctoral work or research-focused careers.',
+    careers: ['Research Epidemiologist','Academic Researcher','PhD Candidate (Epi)','Health Data Scientist'],
+    skills: ['Advanced epi methods','Thesis research','Statistical programming','Systematic reviews'],
+    link: 'https://publichealth.arizona.edu/programs/graduate/ms'
+  },
+  {
+    id: 'ms_biostat',
+    degree: 'Master of Science (MS)',
+    name: 'Biostatistics',
+    tags: ['math','statistics','research','STEM','quantitative','coding','thesis','academic','PhD prep'],
+    description: 'A thesis-based MS for students who want rigorous statistical training for health research. Strong foundation for doctoral programs or specialized research roles.',
+    careers: ['Biostatistician (senior)','Research Scientist','Faculty (ABD prep)','Clinical Data Analyst'],
+    skills: ['Bayesian methods','Survival analysis','Statistical consulting','R/SAS/Python'],
+    link: 'https://publichealth.arizona.edu/programs/graduate/ms'
+  },
+  {
+    id: 'phd_epi',
+    degree: 'Doctor of Philosophy (PhD)',
+    name: 'Epidemiology',
+    tags: ['academic','research','STEM','data','dissertation','faculty','long-term','quantitative','science'],
+    description: 'The terminal research degree in epidemiology. Prepares independent researchers and future faculty to lead population health investigations.',
+    careers: ['University Faculty','Senior Research Scientist','CDC/NIH Investigator','Epidemiology Division Director'],
+    skills: ['Original research design','Grant writing','Peer-reviewed publication','Mentoring','Advanced statistical methods'],
+    link: 'https://publichealth.arizona.edu/programs/graduate/phd'
+  },
+  {
+    id: 'phd_biostat',
+    degree: 'Doctor of Philosophy (PhD)',
+    name: 'Biostatistics',
+    tags: ['academic','math','research','STEM','dissertation','faculty','long-term','quantitative','coding'],
+    description: 'The terminal degree for statistical researchers in health. Trains future faculty and senior methodologists in biostatistical theory and application.',
+    careers: ['Biostatistics Faculty','Senior Biostatistician (pharma)','NIH/CDC Methodologist'],
+    skills: ['Statistical theory','Methodological research','Teaching','Grant writing','Software development'],
+    link: 'https://publichealth.arizona.edu/programs/graduate/phd'
+  },
+  {
+    id: 'drph',
+    degree: 'Doctorate in Public Health (DrPH)',
+    name: 'Public Health Leadership',
+    tags: ['leadership','policy','management','practice','administration','community','advocacy','government','long-term'],
+    description: 'A practice-oriented doctoral degree for experienced public health professionals seeking senior leadership roles. Unlike the PhD, it focuses on applied practice and systems change.',
+    careers: ['State/Local Health Officer','Senior NGO Director','VP of Population Health','Federal Agency Leader','Academic Dean'],
+    skills: ['Executive leadership','Systems change','Applied research','Organizational development','Policy advocacy'],
+    link: 'https://publichealth.arizona.edu/programs/graduate/drph'
+  }
+];
+
+// ══════════════════════════════════════════════
+//  SURVEY QUESTIONS
+// ══════════════════════════════════════════════
+
+const UNDERGRAD_QUESTIONS = [
+  {
+    id: 'q1',
+    text: 'Which topic area excites you most in public health?',
+    multi: false,
+    options: [
+      { label: 'Preventing and tracking diseases (epidemiology, surveillance)', tags: ['research','data','statistics','STEM'] },
+      { label: 'How people's behavior and social environment affect health', tags: ['behavior','community','social','equity'] },
+      { label: 'Environmental or workplace risks to health', tags: ['environment','toxicology','workplace','science'] },
+      { label: 'Global or international health challenges', tags: ['global','international','travel','cross-cultural'] },
+      { label: 'Health promotion and wellness programs', tags: ['wellness','behavior','programs','communication'] },
+      { label: 'Health care systems, policy, and management', tags: ['policy','management','health care','administration'] },
+      { label: 'Connections between animal, human, and environmental health', tags: ['animals','ecology','zoonosis','global'] }
+    ]
+  },
+  {
+    id: 'q2',
+    text: 'How would you describe your academic strengths?',
+    multi: false,
+    options: [
+      { label: 'Strong in math, statistics, or data analysis', tags: ['math','data','statistics','STEM','quantitative'] },
+      { label: 'Strong in biological or natural sciences', tags: ['science','lab','STEM','environment'] },
+      { label: 'Strong in writing, communication, and social sciences', tags: ['communication','social','people','policy'] },
+      { label: 'Strong in arts, humanities, or education', tags: ['school','education','teaching','communication'] },
+      { label: 'Balanced across science and social science', tags: ['community','programs','grassroots'] }
+    ]
+  },
+  {
+    id: 'q3',
+    text: 'What kind of work environment do you see yourself in?',
+    multi: false,
+    options: [
+      { label: 'Government health agencies (local, state, federal)', tags: ['policy','management','programs','service'] },
+      { label: 'Nonprofit or community organizations', tags: ['community','equity','grassroots','people'] },
+      { label: 'Hospitals, clinics, or health care settings', tags: ['health care','clinical','administration','systems'] },
+      { label: 'International organizations or fieldwork abroad', tags: ['global','travel','international','field work'] },
+      { label: 'Corporate wellness, insurance, or private sector', tags: ['wellness','corporate','workplace','economics'] },
+      { label: 'Schools or youth-focused settings', tags: ['school','children','education','youth'] },
+      { label: 'Laboratories, research institutes, or universities', tags: ['research','lab','STEM','data'] }
+    ]
+  },
+  {
+    id: 'q4',
+    text: 'What kind of day-to-day work appeals to you most?',
+    multi: false,
+    options: [
+      { label: 'Analyzing data, running statistics, building models', tags: ['data','math','statistics','quantitative','coding'] },
+      { label: 'Going out into the community, doing outreach or fieldwork', tags: ['community','grassroots','field work','people'] },
+      { label: 'Designing and running health education or training programs', tags: ['education','programs','communication','teaching'] },
+      { label: 'Writing reports, policies, grants, or advocacy materials', tags: ['policy','communication','management'] },
+      { label: 'Conducting laboratory or environmental sampling', tags: ['lab','science','environment','STEM'] },
+      { label: 'Managing teams, budgets, and organizational strategy', tags: ['management','administration','leadership','systems'] }
+    ]
+  },
+  {
+    id: 'q5',
+    text: 'How important is working specifically with underserved or marginalized communities?',
+    multi: false,
+    options: [
+      { label: 'Very important — it's central to why I want to do public health', tags: ['equity','community','grassroots','diversity','social'] },
+      { label: 'Important, but not my primary focus', tags: ['community','programs'] },
+      { label: 'I'd prefer to focus more on technical or systems-level work', tags: ['data','management','systems','policy'] }
+    ]
+  },
+  {
+    id: 'q6',
+    text: 'Are you interested in working with children, schools, or youth health?',
+    multi: false,
+    options: [
+      { label: 'Yes, strongly — I want to focus on youth', tags: ['children','school','education','youth','family'] },
+      { label: 'Somewhat, among other populations', tags: ['community','programs'] },
+      { label: 'Not especially — I prefer working with adults or populations broadly', tags: [] }
+    ]
+  },
+  {
+    id: 'q7',
+    text: 'How interested are you in international travel or working abroad?',
+    multi: false,
+    options: [
+      { label: 'Very — I want international experience to be a major part of my career', tags: ['global','international','travel','cross-cultural','field work'] },
+      { label: 'Interested but not essential', tags: ['global'] },
+      { label: 'I prefer to work domestically', tags: [] }
+    ]
+  },
+  {
+    id: 'q8',
+    text: 'What's your relationship with science courses?',
+    multi: false,
+    options: [
+      { label: 'I enjoy rigorous science (bio, chem, physics, or math)', tags: ['STEM','science','lab','data','quantitative'] },
+      { label: 'I like applied science but prefer people-centered work', tags: ['programs','community','service'] },
+      { label: 'I prefer social sciences, communication, and humanities', tags: ['social','communication','equity','policy'] }
+    ]
+  }
+];
+
+const GRAD_QUESTIONS = [
+  {
+    id: 'q1',
+    text: 'What best describes your primary career goal?',
+    multi: false,
+    options: [
+      { label: 'Conduct original research and publish in academic or scientific settings', tags: ['research','academic','STEM','data','quantitative','PhD prep'] },
+      { label: 'Lead public health programs or agencies at the local, state, or federal level', tags: ['leadership','management','policy','administration','government'] },
+      { label: 'Deliver health education and community-based programs', tags: ['community','education','behavior','programs','people'] },
+      { label: 'Work on environmental, occupational, or climate-related health', tags: ['environment','toxicology','climate','workplace','science'] },
+      { label: 'Analyze health data, build models, or support research teams', tags: ['data','statistics','quantitative','STEM','coding'] },
+      { label: 'Work in global health or international settings', tags: ['global','international','travel','cross-cultural','field work'] },
+      { label: 'Focus on women, children, and family health', tags: ['family','children','maternal','reproductive','community'] }
+    ]
+  },
+  {
+    id: 'q2',
+    text: 'What is your quantitative/statistical background?',
+    multi: false,
+    options: [
+      { label: 'Strong — I've taken advanced math, stats, or data science courses', tags: ['math','data','statistics','quantitative','STEM','coding'] },
+      { label: 'Moderate — I've had some stats but prefer applied work', tags: ['programs','community','policy'] },
+      { label: 'Limited — I'm more comfortable with qualitative and social science methods', tags: ['behavior','social','communication','equity','community'] }
+    ]
+  },
+  {
+    id: 'q3',
+    text: 'Which type of graduate training fits your goals?',
+    multi: false,
+    options: [
+      { label: 'Applied professional degree — I want to work in practice, not academia', tags: ['management','policy','community','programs','service','leadership'] },
+      { label: 'Research degree with thesis — I'm considering doctoral work or research careers', tags: ['research','academic','data','STEM','thesis','PhD prep'] },
+      { label: 'Either is fine — I'm still exploring', tags: ['programs','community','policy','data'] },
+      { label: 'Doctoral degree — I want to teach, research, or lead at the highest level', tags: ['academic','research','dissertation','faculty','long-term'] }
+    ]
+  },
+  {
+    id: 'q4',
+    text: 'Which best describes the public health issue you care most about?',
+    multi: false,
+    options: [
+      { label: 'Infectious disease, outbreaks, and surveillance', tags: ['research','data','STEM','lab','clinical','science'] },
+      { label: 'Chronic disease, behavioral risk factors, and lifestyle', tags: ['behavior','community','education','programs'] },
+      { label: 'Health disparities, social determinants, and equity', tags: ['equity','community','social','diversity','culture'] },
+      { label: 'Environmental contamination, climate, and occupational hazards', tags: ['environment','science','STEM','lab','toxicology'] },
+      { label: 'Health policy, system reform, and access to care', tags: ['policy','management','advocacy','government','health care'] },
+      { label: 'Global health, development, and cross-border disease', tags: ['global','international','travel','cross-cultural'] },
+      { label: 'Family, maternal, and child health', tags: ['family','children','maternal','reproductive','clinical'] }
+    ]
+  },
+  {
+    id: 'q5',
+    text: 'How many years of professional public health work experience do you have?',
+    multi: false,
+    options: [
+      { label: 'None or minimal — I'm entering directly from undergraduate', tags: ['programs','data','research'] },
+      { label: '1–3 years — early career professional', tags: ['community','policy','programs','management'] },
+      { label: '4+ years — mid-career professional seeking advancement', tags: ['leadership','management','policy','administration','advocacy','long-term'] }
+    ]
+  },
+  {
+    id: 'q6',
+    text: 'How important is international experience or global field work to you?',
+    multi: false,
+    options: [
+      { label: 'Essential — I want it central to my graduate work', tags: ['global','international','travel','cross-cultural','field work'] },
+      { label: 'Desirable but not required', tags: ['global'] },
+      { label: 'Not a priority — I'll focus domestically', tags: [] }
+    ]
+  },
+  {
+    id: 'q7',
+    text: 'Would you prefer a practice-oriented doctoral degree over a research PhD?',
+    multi: false,
+    options: [
+      { label: 'Yes — I want a doctorate focused on leadership and practice (DrPH)', tags: ['leadership','policy','management','practice','administration','community','advocacy','long-term'] },
+      { label: 'No — I want a research PhD with independent investigation', tags: ['academic','research','dissertation','faculty','data','long-term'] },
+      { label: 'I'm interested in a master's degree, not doctoral', tags: ['programs','community','policy','data'] }
+    ]
+  },
+  {
+    id: 'q8',
+    text: 'How do you feel about working directly with communities vs. behind-the-scenes analysis?',
+    multi: false,
+    options: [
+      { label: 'I thrive working directly with people, communities, or organizations', tags: ['community','people','programs','education','grassroots','behavior'] },
+      { label: 'I prefer a mix of fieldwork and analysis', tags: ['policy','management','data','community'] },
+      { label: 'I prefer analytical, data-driven, or lab work behind the scenes', tags: ['data','statistics','quantitative','research','lab','STEM','coding'] }
+    ]
+  }
+];
+
+// ══════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════
+
+let currentLevel = null;
+let currentQuestionIndex = 0;
+let answers = [];
+let programs = [];
+let questions = [];
+
+// ══════════════════════════════════════════════
+//  SCORING
+// ══════════════════════════════════════════════
+function scorePrograms(answers, programList) {
+  // Build a frequency map of tags from all selected answers
+  const tagScore = {};
+  answers.forEach(ans => {
+    (ans.tags || []).forEach(tag => {
+      tagScore[tag] = (tagScore[tag] || 0) + 1;
+    });
+  });
+
+  return programList.map(prog => {
+    let score = 0;
+    let matches = [];
+    prog.tags.forEach(t => {
+      if (tagScore[t]) {
+        score += tagScore[t];
+        if (!matches.includes(t)) matches.push(t);
+      }
+    });
+    // Normalize: max possible score = sum of all tag hits
+    const maxPossible = prog.tags.length * answers.length;
+    const pct = maxPossible > 0 ? Math.min(100, Math.round((score / maxPossible) * 100 * 2.2)) : 0;
+    return { ...prog, score, pct: Math.min(99, Math.max(pct, 5)), matches };
+  }).sort((a, b) => b.score - a.score);
+}
+
+// ══════════════════════════════════════════════
+//  UI HELPERS
+// ══════════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+function updateProgress() {
+  const wrap = document.getElementById('progressWrap');
+  if (currentLevel === null) {
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = 'flex';
+  const total = questions.length;
+  const current = Math.min(currentQuestionIndex + 1, total);
+  const pct = ((current - 1) / total) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = `Question ${current}`;
+  document.getElementById('progressCount').textContent = `${current} / ${total}`;
+}
+
+// ══════════════════════════════════════════════
+//  SURVEY FLOW
+// ══════════════════════════════════════════════
+function startSurvey(level) {
+  currentLevel = level;
+  currentQuestionIndex = 0;
+  answers = [];
+  programs = level === 'undergrad' ? UNDERGRAD_PROGRAMS : GRAD_PROGRAMS;
+  questions = level === 'undergrad' ? UNDERGRAD_QUESTIONS : GRAD_QUESTIONS;
+
+  const levelLabel = level === 'undergrad' ? 'Undergraduate Programs' : 'Graduate Programs';
+  const levelTitle = level === 'undergrad'
+    ? 'Tell us about your interests'
+    : 'Tell us about your goals';
+
+  document.getElementById('qLevelTag').textContent = levelLabel;
+  document.getElementById('qTitle').textContent = levelTitle;
+
+  showScreen('questions');
+  updateProgress();
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQuestionIndex];
+  const saved = answers[currentQuestionIndex];
+  const isLast = currentQuestionIndex === questions.length - 1;
+
+  const container = document.getElementById('questionContainer');
+  container.innerHTML = '';
+
+  const block = document.createElement('div');
+  block.className = 'question-block';
+
+  const num = document.createElement('div');
+  num.className = 'question-number';
+  num.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+  block.appendChild(num);
+
+  const text = document.createElement('div');
+  text.className = 'question-text';
+  text.textContent = q.text;
+  block.appendChild(text);
+
+  const grid = document.createElement('div');
+  grid.className = 'options-grid';
+
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt.label;
+    if (saved && saved.optionIndex === i) btn.classList.add('selected');
+    btn.addEventListener('click', () => {
+      grid.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      answers[currentQuestionIndex] = { optionIndex: i, tags: opt.tags };
+      document.getElementById('btnNext').disabled = false;
+    });
+    grid.appendChild(btn);
+  });
+
+  block.appendChild(grid);
+  container.appendChild(block);
+
+  const btnNext = document.getElementById('btnNext');
+  const btnBack = document.getElementById('btnBack');
+  btnNext.textContent = isLast ? 'See My Results →' : 'Next →';
+  btnNext.disabled = !saved;
+  btnBack.style.display = currentQuestionIndex === 0 ? 'none' : 'inline-block';
+}
+
+function nextQuestion() {
+  if (!answers[currentQuestionIndex]) return;
+  if (currentQuestionIndex < questions.length - 1) {
+    currentQuestionIndex++;
+    updateProgress();
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else {
+    showResults();
+  }
+}
+
+function prevQuestion() {
+  if (currentQuestionIndex > 0) {
+    currentQuestionIndex--;
+    updateProgress();
+    renderQuestion();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+// ══════════════════════════════════════════════
+//  RESULTS
+// ══════════════════════════════════════════════
+function showResults() {
+  showScreen('loading');
+  document.getElementById('progressWrap').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  setTimeout(() => {
+    const ranked = scorePrograms(answers.filter(Boolean), programs);
+    renderResults(ranked);
+    showScreen('results');
+    // Animate bars after render
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        document.querySelectorAll('.match-bar-fill').forEach(bar => {
+          bar.style.width = bar.dataset.pct + '%';
+        });
+      }, 100);
+    });
+  }, 900);
+}
+
+function renderResults(ranked) {
+  const levelLabel = currentLevel === 'undergrad' ? 'Undergraduate' : 'Graduate';
+  document.getElementById('resultLevelTag').textContent = levelLabel + ' Results';
+  document.getElementById('resultSubhead').textContent =
+    `${ranked.length} programs ranked by fit with your responses. Click any card to see details.`;
+
+  const container = document.getElementById('resultsContainer');
+  container.innerHTML = '';
+
+  ranked.forEach((prog, idx) => {
+    const rankClass = idx === 0 ? 'rank-1' : idx === 1 ? 'rank-2' : idx === 2 ? 'rank-3' : 'rank-other';
+    const card = document.createElement('div');
+    card.className = `result-card ${rankClass}`;
+
+    const topRow = document.createElement('div');
+    topRow.className = 'result-card-top';
+
+    const rankBadge = document.createElement('div');
+    rankBadge.className = 'rank-badge';
+    rankBadge.textContent = `#${idx + 1}`;
+
+    const main = document.createElement('div');
+    main.className = 'result-main';
+
+    const typeDiv = document.createElement('div');
+    typeDiv.className = 'result-program-type';
+    typeDiv.textContent = prog.degree;
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'result-program-name';
+    nameDiv.textContent = prog.name;
+
+    const matchRow = document.createElement('div');
+    matchRow.className = 'match-row';
+
+    const barTrack = document.createElement('div');
+    barTrack.className = 'match-bar-track';
+    const barFill = document.createElement('div');
+    barFill.className = 'match-bar-fill';
+    barFill.style.width = '0%';
+    barFill.dataset.pct = prog.pct;
+    barTrack.appendChild(barFill);
+
+    const pctDiv = document.createElement('div');
+    pctDiv.className = 'match-pct';
+    pctDiv.textContent = prog.pct + '%';
+
+    matchRow.appendChild(barTrack);
+    matchRow.appendChild(pctDiv);
+
+    main.appendChild(typeDiv);
+    main.appendChild(nameDiv);
+    main.appendChild(matchRow);
+    topRow.appendChild(rankBadge);
+    topRow.appendChild(main);
+    card.appendChild(topRow);
+
+    // Toggle button
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'toggle-detail-btn';
+    toggleBtn.innerHTML = '<span class="toggle-arrow">▶</span> Program Details & Careers';
+    card.appendChild(toggleBtn);
+
+    // Detail panel
+    const detail = document.createElement('div');
+    detail.className = 'result-detail';
+    detail.innerHTML = `
+      <h4>About this program</h4>
+      <p>${prog.description}</p>
+      <h4>Typical career paths</h4>
+      <ul>${prog.careers.map(c => `<li>${c}</li>`).join('')}</ul>
+      <h4>Key skills you'll develop</h4>
+      <ul>${prog.skills.map(s => `<li>${s}</li>`).join('')}</ul>
+      <h4>Learn more</h4>
+      <p><a href="${prog.link}" target="_blank" rel="noopener">Official program page →</a></p>
+    `;
+    card.appendChild(detail);
+
+    toggleBtn.addEventListener('click', () => {
+      const isOpen = detail.classList.toggle('open');
+      toggleBtn.classList.toggle('open', isOpen);
+      toggleBtn.querySelector('.toggle-arrow').style.transform = isOpen ? 'rotate(90deg)' : '';
+    });
+
+    container.appendChild(card);
+  });
+}
+
+// ══════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════
+function restart() {
+  currentLevel = null;
+  currentQuestionIndex = 0;
+  answers = [];
+  document.getElementById('progressWrap').style.display = 'none';
+  showScreen('intro');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function switchLevel() {
+  const next = currentLevel === 'undergrad' ? 'grad' : 'undergrad';
+  startSurvey(next);
+  showScreen('questions');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
