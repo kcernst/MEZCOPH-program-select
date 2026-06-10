@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UA Zuckerman COPH — Program Finder</title>
+<style>
+:root{--red:#AB0520;--navy:#0C234B;--green:#1a6b3c;--offwhite:#F5F3F0;--lightgrey:#E8E4DE;--midgrey:#9B9590;--shadow:5px 5px 0 #000;--shadow-sm:3px 3px 0 #000;--border:3px solid #000;--border-thin:2px solid #000}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--offwhite);color:#111;min-height:100vh}
+.site-header{background:var(--navy);border-bottom:var(--border)}
+.header-stripe{background:var(--red);height:7px}
+.header-inner{max-width:920px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;gap:14px}
+.ua-logo{background:var(--red);color:#fff;font-size:24px;font-weight:900;font-family:'Arial Black',Arial,sans-serif;padding:5px 12px;border:2px solid #fff;letter-spacing:1px;box-shadow:2px 2px 0 rgba(0,0,0,.4);flex-shrink:0}
+.header-title{color:#fff}
+.header-title h1{font-size:clamp(11px,1.8vw,16px);font-weight:900;font-family:'Arial Black',Arial,sans-serif;text-transform:uppercase;letter-spacing:.5px;line-height:1.2}
+.header-title p{font-size:11px;color:#8AABDC;margin-top:2px}
+.progress-bar-wrap{background:var(--navy);border-bottom:var(--border);padding:10px 20px;display:none}
+.progress-bar-inner{max-width:920px;margin:0 auto;display:flex;align-items:center;gap:12px}
+.progress-label{color:#8AABDC;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;white-space:nowrap;min-width:90px}
+.progress-track{flex:1;height:10px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25)}
+.progress-fill{height:100%;background:var(--red);width:0%;transition:width .4s ease}
+.progress-count{color:#fff;font-size:12px;font-weight:700;min-width:50px;text-align:right;white-space:nowrap}
+.main{max-width:920px;margin:0 auto;padding:32px 20px 80px}
+.screen{display:none}.screen.active{display:block}
+.hero{background:var(--red);border:var(--border);box-shadow:var(--shadow);padding:36px 32px;margin-bottom:28px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;right:-60px;top:-60px;width:220px;height:220px;border:40px solid rgba(255,255,255,.07);border-radius:50%;pointer-events:none}
+.hero h2{color:#fff;font-family:'Arial Black',Arial,sans-serif;font-size:clamp(26px,5vw,44px);font-weight:900;text-transform:uppercase;line-height:1.05;margin-bottom:14px;position:relative}
+.hero p{color:rgba(255,255,255,.88);font-size:15px;line-height:1.65;max-width:560px;position:relative}
+.track-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+@media(max-width:680px){.track-grid{grid-template-columns:1fr}}
+.track-card{background:#fff;border:var(--border);box-shadow:var(--shadow);padding:22px 20px 56px;cursor:pointer;text-align:left;position:relative;transition:transform .12s,box-shadow .12s;width:100%}
+.track-card:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #000}
+.track-card:active{transform:translate(2px,2px);box-shadow:2px 2px 0 #000}
+.track-badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:3px 9px;margin-bottom:10px;border:1px solid #000}
+.badge-ug{background:var(--navy);color:#fff}.badge-grad{background:var(--red);color:#fff}.badge-hp{background:var(--green);color:#fff}
+.track-card h3{font-family:'Arial Black',Arial,sans-serif;font-size:17px;font-weight:900;text-transform:uppercase;line-height:1.2;margin-bottom:8px}
+.track-card p{font-size:13px;color:#555;line-height:1.5}
+.track-arrow{position:absolute;bottom:16px;right:16px;width:34px;height:34px;background:var(--red);color:#fff;font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #000}
+.disclaimer-box{background:#FFF8DC;border:var(--border-thin);border-color:#B8860B;box-shadow:3px 3px 0 #B8860B;padding:14px 18px;font-size:12px;line-height:1.55;color:#5a4000}
+.disclaimer-box a{color:#5a4000;font-weight:700}
+.q-context-bar{background:var(--navy);border:var(--border);box-shadow:var(--shadow);padding:18px 24px;margin-bottom:24px}
+.q-context-bar .track-tag{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:3px 9px;margin-bottom:8px;border:1px solid rgba(255,255,255,.3)}
+.q-context-bar h2{color:#fff;font-family:'Arial Black',Arial,sans-serif;font-size:clamp(14px,2.5vw,21px);font-weight:900;text-transform:uppercase;line-height:1.2}
+.question-card{background:#fff;border:var(--border);box-shadow:var(--shadow);padding:28px 28px 24px;margin-bottom:20px}
+.q-number{font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+.q-text{font-size:clamp(14px,2.2vw,17px);font-weight:700;line-height:1.5;margin-bottom:22px;color:#111}
+.options-list{display:flex;flex-direction:column;gap:10px}
+.option-btn{background:var(--offwhite);border:var(--border-thin);box-shadow:var(--shadow-sm);padding:13px 44px 13px 16px;text-align:left;font-size:13px;font-family:Arial,Helvetica,sans-serif;cursor:pointer;line-height:1.45;color:#111;position:relative;transition:background .1s,transform .1s,box-shadow .1s;width:100%}
+.option-btn:hover{background:var(--lightgrey);transform:translate(-1px,-1px);box-shadow:4px 4px 0 #000}
+.option-btn.selected{background:var(--navy);color:#fff;border-color:var(--navy)}
+.option-btn.selected::after{content:'\2713';position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:900;background:var(--red);color:#fff;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.nav-buttons{display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+.btn{font-family:'Arial Black',Arial,sans-serif;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.5px;padding:12px 22px;border:var(--border);cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .1s,box-shadow .1s;display:inline-block;background:#fff;color:#111}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 #000}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}
+.btn-red{background:var(--red);color:#fff}.btn-navy{background:var(--navy);color:#fff}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none !important;box-shadow:var(--shadow-sm) !important}
+.loading-wrap{text-align:center;padding:72px 20px}
+.spinner{width:56px;height:56px;border:6px solid var(--lightgrey);border-top-color:var(--red);border-radius:50%;margin:0 auto 24px;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-wrap h2{font-family:'Arial Black',Arial,sans-serif;font-size:26px;font-weight:900;text-transform:uppercase;color:var(--navy);margin-bottom:8px}
+.loading-wrap p{font-size:14px;color:var(--midgrey)}
+.results-header{background:var(--navy);border:var(--border);box-shadow:var(--shadow);padding:24px 28px;margin-bottom:24px}
+.results-header .tag{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:3px 9px;margin-bottom:10px;border:1px solid rgba(255,255,255,.3)}
+.results-header h2{color:#fff;font-family:'Arial Black',Arial,sans-serif;font-size:clamp(20px,4vw,30px);font-weight:900;text-transform:uppercase;line-height:1.1}
+.results-header p{color:#8AABDC;font-size:13px;margin-top:8px}
+.result-card{background:#fff;border:var(--border);box-shadow:var(--shadow);margin-bottom:16px;overflow:hidden}
+.result-card-header{display:flex;align-items:stretch;cursor:pointer}
+.rank-num{font-family:'Arial Black',Arial,sans-serif;font-size:28px;font-weight:900;color:#fff;min-width:62px;display:flex;align-items:center;justify-content:center;border-right:var(--border);flex-shrink:0;padding:0 4px}
+.rank-1 .rank-num{background:var(--red)}.rank-2 .rank-num{background:var(--navy)}.rank-3 .rank-num{background:#4a5568}.rank-other .rank-num{background:#767676}
+.result-info{flex:1;padding:14px 18px}
+.result-degree-type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--midgrey);margin-bottom:3px}
+.result-name{font-family:'Arial Black',Arial,sans-serif;font-size:clamp(12px,2vw,16px);font-weight:900;text-transform:uppercase;line-height:1.2;margin-bottom:10px}
+.match-row{display:flex;align-items:center;gap:10px}
+.match-track{flex:1;height:9px;background:var(--lightgrey);border:1px solid #ccc}
+.match-fill{height:100%;width:0%;transition:width 1.1s cubic-bezier(.4,0,.2,1)}
+.rank-1 .match-fill{background:var(--red)}.rank-2 .match-fill{background:var(--navy)}.rank-3 .match-fill{background:#4a5568}.rank-other .match-fill{background:#9ca3af}
+.match-pct{font-family:'Arial Black',Arial,sans-serif;font-size:19px;font-weight:900;min-width:50px;text-align:right}
+.rank-1 .match-pct{color:var(--red)}.rank-2 .match-pct{color:var(--navy)}.rank-other .match-pct{color:#767676}
+.result-expand-btn{background:none;border:none;border-top:var(--border-thin);width:100%;text-align:left;padding:10px 18px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--navy);cursor:pointer;display:flex;align-items:center;gap:6px;transition:background .1s}
+.result-expand-btn:hover{background:#EEF2F8}
+.expand-arrow{display:inline-block;transition:transform .2s}
+.result-expand-btn.open .expand-arrow{transform:rotate(90deg)}
+.result-detail{display:none;padding:18px 20px;background:var(--offwhite);border-top:var(--border-thin);font-size:13px;line-height:1.6;color:#333}
+.result-detail.open{display:block}
+.detail-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--red);margin-bottom:5px;margin-top:14px}
+.detail-title:first-child{margin-top:0}
+.result-detail ul{padding-left:18px}
+.result-detail ul li{margin-bottom:3px}
+.result-detail a{color:var(--navy);font-weight:700}
+.salary-badge{display:inline-block;background:var(--green);color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border:2px solid #000;box-shadow:2px 2px 0 #000;margin-bottom:6px}
+.results-footer{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}
+@media(max-width:600px){.main{padding:18px 12px 60px}.hero{padding:22px 18px}.question-card{padding:18px 16px}.nav-buttons{flex-direction:column-reverse}.rank-num{min-width:48px;font-size:22px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none !important;transition:none !important}}
+:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <div class="header-stripe"></div>
+  <div class="header-inner">
+    <div class="ua-logo">UA</div>
+    <div class="header-title">
+      <h1>Mel &amp; Enid Zuckerman College of Public Health</h1>
+      <p>Program Fit Finder &nbsp;&middot;&nbsp; University of Arizona</p>
+    </div>
+  </div>
+</header>
+<div class="progress-bar-wrap" id="progressBar">
+  <div class="progress-bar-inner">
+    <div class="progress-label" id="progLabel">Question 1</div>
+    <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+    <div class="progress-count" id="progCount"></div>
+  </div>
+</div>
+<div class="main">
+  <div class="screen active" id="screen-landing">
+    <div class="hero">
+      <h2>Find Your<br>Public Health Path</h2>
+      <p>Answer 8 questions about how you think, what drives you, and where you want to go. We rank every degree in the college &mdash; including the School of Health Professions &mdash; by how well it fits you.</p>
+    </div>
+    <p style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#666;margin-bottom:14px;">Which level are you exploring?</p>
+    <div class="track-grid">
+      <button class="track-card" id="btn-ug">
+        <div class="track-badge badge-ug">Undergraduate</div>
+        <h3>Bachelor's Degrees</h3>
+        <p>BS in Public Health (6 emphases) and BA in Wellness &amp; Health Promotion Practice (3 emphases).</p>
+        <div class="track-arrow">&#8594;</div>
+      </button>
+      <button class="track-card" id="btn-grad">
+        <div class="track-badge badge-grad">Graduate</div>
+        <h3>Master's &amp; Doctoral</h3>
+        <p>MPH (7 concentrations), MS, PhD, and DrPH programs for students with a bachelor's degree.</p>
+        <div class="track-arrow">&#8594;</div>
+      </button>
+      <button class="track-card" id="btn-hp">
+        <div class="track-badge badge-hp">Health Professions</div>
+        <h3>Clinical &amp; Design</h3>
+        <p>PA, DPT, Genetic Counseling, Nurse-Midwifery, and Health Sciences Design &mdash; the School of Health Professions.</p>
+        <div class="track-arrow">&#8594;</div>
+      </button>
+    </div>
+    <div class="disclaimer-box">
+      <strong>Note:</strong> This tool provides unofficial guidance only. Always consult the <a href="https://publichealth.arizona.edu/programs" target="_blank">official COPH website</a> and an academic advisor before making enrollment decisions.
+    </div>
+  </div>
+  <div class="screen" id="screen-questions">
+    <div class="q-context-bar">
+      <div class="track-tag" id="qTrackTag"></div>
+      <h2 id="qTitle">Tell us about yourself</h2>
+    </div>
+    <div id="questionMount"></div>
+    <div class="nav-buttons">
+      <button class="btn btn-red" id="btnNext" disabled>Next &#8594;</button>
+      <button class="btn" id="btnBack" style="display:none">&#8592; Back</button>
+    </div>
+  </div>
+  <div class="screen" id="screen-loading">
+    <div class="loading-wrap">
+      <div class="spinner"></div>
+      <h2>Analyzing Your Fit</h2>
+      <p>Matching your responses to every program&hellip;</p>
+    </div>
+  </div>
+  <div class="screen" id="screen-results">
+    <div class="results-header">
+      <div class="tag" id="resTag"></div>
+      <h2>Your Program Rankings</h2>
+      <p id="resSubhead"></p>
+    </div>
+    <div id="resultsMount"></div>
+    <div class="disclaimer-box" style="margin-top:20px">
+      <strong>Exploration tool only &mdash; not official advising.</strong> Salary figures are national averages from BLS and published surveys (2024&ndash;2025). Contact the <a href="https://publichealth.arizona.edu/office-student-affairs" target="_blank">Office of Student Affairs</a> for personalized guidance.
+    </div>
+    <div class="results-footer">
+      <button class="btn btn-red" id="btnRestart">Start Over</button>
+      <button class="btn btn-navy" id="btnOtherTrack">Try Another Track</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+"use strict";
+var P={
+ug:[
+{id:"bs_global",degree:"BS in Public Health",name:"Global Health Emphasis",
+tags:["systems","bigpicture","abroad","languages","inequity","adaptable","curious","crosscultural","collaborative","creative"],
+desc:"Examines health challenges across borders — disease, equity, and systems in diverse global contexts. Grounded in ASPPH core competencies with an international lens. Includes field placement abroad.",
+careers:["Global Health Officer","International Health Consultant","NGO Program Manager","Peace Corps Volunteer","WHO/PAHO Staff"],
+skills:["International health policy","Cross-cultural communication","Epidemiological field methods","Global health systems analysis"],
+salary:"$44,000–$58,000 starting · $60,000–$85,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/undergraduate/bs/global-health"},
+{id:"bs_env",degree:"BS in Public Health",name:"Environmental & Occupational Health Emphasis",
+tags:["detail","analytical","science","outdoors","technical","regulation","investigative","STEM","systematic","tangible"],
+desc:"Covers environmental exposures, workplace hazards, toxicology, and regulatory frameworks. Aligned with APHA Environment Section competencies and EPA/OSHA career pathways.",
+careers:["Environmental Health Specialist","Industrial Hygienist","Environmental Consultant","EPA/OSHA Inspector","Air/Water Quality Analyst"],
+skills:["Exposure assessment","Toxicology","Environmental risk analysis","Regulatory compliance"],
+salary:"$46,000–$60,000 starting · $65,000–$90,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/undergraduate/bs/environmental-occupational-health"},
+{id:"bs_onehealth",degree:"BS in Public Health",name:"One Health Emphasis",
+tags:["science","curious","outdoors","animals","ecology","STEM","systems","bigpicture","investigative","crosscultural"],
+desc:"Explores connections between human, animal, and environmental health. Aligned with the WHO One Health framework. Ideal for students drawn to ecology, veterinary science, and emerging infectious diseases.",
+careers:["One Health Specialist","Wildlife Disease Researcher","Zoonotic Disease Investigator","Conservation Health Officer","Biosecurity Analyst"],
+skills:["Zoonotic disease surveillance","Ecological fieldwork","Human-animal-environment interface","Emerging pathogen tracking"],
+salary:"$44,000–$58,000 starting · $60,000–$82,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/undergraduate/bs/one-health"},
+{id:"bs_systems",degree:"BS in Public Health",name:"Health Systems Theory Emphasis",
+tags:["analytical","policy","management","systems","economics","organized","leadership","strategic","bigpicture","detail"],
+desc:"Analyzes how health systems are organized, financed, and managed. Aligned with ASPPH competencies in systems thinking and health policy. Strong pipeline to healthcare management.",
+careers:["Health Systems Analyst","Hospital Administrator","Health Policy Aide","Managed Care Analyst","Health Economist"],
+skills:["Health economics","Systems thinking","Policy analysis","Organizational management"],
+salary:"$46,000–$62,000 starting · $68,000–$95,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/undergraduate/bs/health-systems-theory"},
+{id:"bs_practice",degree:"BS in Public Health",name:"Public Health Practice Emphasis",
+tags:["people","community","collaborative","service","flexible","outreach","empathy","communication","practical","generalist"],
+desc:"A broad, practice-focused degree covering ASPPH core public health competencies. Great generalist path with strong community experience and maximum career flexibility across sectors.",
+careers:["Community Health Worker","Public Health Generalist","County Health Dept. Staff","Health Educator","Program Coordinator"],
+skills:["Community needs assessment","Program planning","Health communication","Interdisciplinary collaboration"],
+salary:"$40,000–$55,000 starting · $55,000–$75,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/undergraduate/bs/public-health-practice"},
+{id:"bs_biostat",degree:"BS in Public Health",name:"Biostatistics / Quantitative Methods Emphasis",
+tags:["analytical","STEM","detail","data","math","coding","systematic","investigative","technical","independent"],
+desc:"Rigorous statistical training applied to public health data. Aligned with ASPPH quantitative methods competencies. Strong foundation for graduate school or data science careers.",
+careers:["Biostatistician","Data Analyst","Research Coordinator","Clinical Trials Analyst","Epidemiology Research Assistant"],
+skills:["Statistical software (R, SAS)","Study design","Data visualization","Quantitative reasoning"],
+salary:"$50,000–$65,000 starting · $70,000–$100,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/undergraduate/bs/quantitative-methods"},
+{id:"ba_worksite",degree:"BA in Wellness & Health Promotion Practice",name:"Worksite / Corporate Wellness Emphasis",
+tags:["people","coaching","motivating","communication","organized","leadership","wellness","practical","collaborative","service"],
+desc:"Prepares graduates to design and run corporate wellness programs. Grounded in NCHEC's CHES competencies and behavioral science frameworks endorsed by APHA.",
+careers:["Corporate Wellness Coordinator","Employee Wellness Consultant","Health Coach","Benefits & Wellness Specialist"],
+skills:["Behavior change theory","Program design","Health coaching","Worksite intervention"],
+salary:"$42,000–$55,000 starting · $58,000–$78,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/undergraduate/ba"},
+{id:"ba_community",degree:"BA in Wellness & Health Promotion Practice",name:"Community & Population Health Promotion Emphasis",
+tags:["people","empathy","inequity","community","collaborative","service","outreach","communication","culture","advocacy"],
+desc:"Focuses on community-level health promotion with equity and cultural competence. Grounded in APHA's social determinants framework and CDC's community health worker competency model.",
+careers:["Community Health Educator","Health Outreach Coordinator","Nonprofit Health Program Manager","Social Worker (health focus)"],
+skills:["Health education design","Cultural humility","Community organizing","Social determinants of health"],
+salary:"$38,000–$52,000 starting · $52,000–$70,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/undergraduate/ba"},
+{id:"ba_school",degree:"BA in Wellness & Health Promotion Practice",name:"School Health Emphasis",
+tags:["teaching","children","empathy","communication","nurturing","education","collaborative","people","prevention","community"],
+desc:"Trains health professionals for K-12 school settings. Aligned with ASHA standards and CDC's Whole School, Whole Community, Whole Child framework.",
+careers:["School Health Educator","Student Wellness Coordinator","Youth Health Program Designer","Health Teacher","Prevention Specialist"],
+skills:["Child and adolescent health","Curriculum development","School policy","Prevention programs"],
+salary:"$40,000–$53,000 starting · $53,000–$70,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/undergraduate/ba"}
+],
+grad:[
+{id:"mph_epi",degree:"MPH",name:"Epidemiology Concentration",
+tags:["investigative","analytical","STEM","data","detail","systematic","science","curious","independent","evidence"],
+desc:"Core MPH with rigorous training in disease surveillance, outbreak investigation, and population-based research. Aligned with CDC epidemiology competencies and ASPPH foundational knowledge domains.",
+careers:["Epidemiologist","Disease Surveillance Officer","CDC/ADHS Researcher","Public Health Scientist","Outbreak Investigator"],
+skills:["Epidemiologic methods","Biostatistics","Study design","Surveillance systems","SAS/R"],
+salary:"$58,000–$75,000 starting · $80,000–$110,000 mid-career (BLS median: $84,000)",
+link:"https://publichealth.arizona.edu/programs/graduate/mph/epidemiology"},
+{id:"mph_biostat",degree:"MPH",name:"Biostatistics Concentration",
+tags:["analytical","math","data","STEM","detail","systematic","coding","technical","evidence","independent"],
+desc:"Advanced statistical methods for health research. Aligns with ASPPH quantitative competency domain. Strong pipeline to pharma, government research, and data science roles.",
+careers:["Biostatistician","Statistical Analyst","Clinical Trials Statistician","Health Data Scientist"],
+skills:["Advanced statistics","R / SAS / Python","Machine learning for health","Clinical research methods"],
+salary:"$63,000–$80,000 starting · $87,000–$132,000 mid-career (BLS range 2025)",
+link:"https://publichealth.arizona.edu/programs/graduate/mph/biostatistics"},
+{id:"mph_env",degree:"MPH",name:"Environmental & Occupational Health Concentration",
+tags:["STEM","science","technical","regulation","outdoors","investigative","analytical","detail","systematic","evidence"],
+desc:"Graduate-level study of environmental exposures, workplace hazards, and regulatory health policy. Linked to APHA Environment Section competencies and EPA/OSHA career pathways.",
+careers:["Environmental Health Director","Industrial Hygienist","Risk Assessment Specialist","EPA/State Agency Professional"],
+skills:["Advanced toxicology","Environmental epidemiology","Exposure assessment","Health risk communication"],
+salary:"$58,000–$74,000 starting · $75,000–$105,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/graduate/mph/environmental-occupational-health"},
+{id:"mph_hebs",degree:"MPH",name:"Health Education & Behavioral Sciences Concentration",
+tags:["people","empathy","community","coaching","communication","evidence","teaching","collaborative","inequity","outreach"],
+desc:"Applies social and behavioral science theories to design and evaluate health programs. Grounded in APHA HEBS Section and NCHEC's CHES/MCHES advanced competency framework.",
+careers:["Health Education Specialist (CHES/MCHES)","Community Health Program Director","Health Communication Officer","Behavioral Health Consultant"],
+skills:["Behavior change theories","Program evaluation","Health literacy","Qualitative methods"],
+salary:"$52,000–$68,000 starting · $68,000–$95,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/graduate/mph/health-education-behavioral-sciences"},
+{id:"mph_mch",degree:"MPH",name:"Family & Child Health Concentration",
+tags:["empathy","nurturing","advocacy","inequity","community","people","policy","collaborative","service","evidence"],
+desc:"Health of women, children, and families. Aligned with AMCHP competencies and the Title V MCH workforce development framework. Intersects clinical practice and health equity advocacy.",
+careers:["MCH Program Coordinator","Title V Agency Professional","Maternal Health Policy Advisor","School Health Director"],
+skills:["MCH epidemiology","Reproductive health policy","Family-centered care","Community health assessment"],
+salary:"$52,000–$68,000 starting · $65,000–$90,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/graduate/mph/family-child-health"},
+{id:"mph_policy",degree:"MPH",name:"Public Health Policy & Management Concentration",
+tags:["leadership","strategic","policy","management","advocacy","organized","communication","bigpicture","systems","evidence"],
+desc:"Prepares public health leaders for government systems, program management, and policy advocacy. Aligned with ASPPH management and leadership competency domains.",
+careers:["Public Health Director","Policy Analyst","Health Agency Administrator","Legislative Health Aide","Nonprofit Director"],
+skills:["Health policy analysis","Public administration","Grant writing","Strategic planning","Public health law"],
+salary:"$58,000–$75,000 starting · $83,000–$128,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/graduate/mph/public-health-policy-management"},
+{id:"mph_global",degree:"MPH",name:"Global Health Concentration",
+tags:["abroad","crosscultural","inequity","bigpicture","systems","adaptable","curious","collaborative","advocacy","evidence"],
+desc:"Addresses health challenges in low- and middle-income countries. Includes field placement; aligned with the Consortium of Universities for Global Health (CUGH) competency framework.",
+careers:["Global Health Program Officer","International NGO Coordinator","WHO/PAHO Staff","USAID Public Health Advisor"],
+skills:["Global health systems","International health law","Cross-cultural competency","Field epidemiology"],
+salary:"$50,000–$68,000 starting · $68,000–$100,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/graduate/mph/global-health"},
+{id:"ms_epi",degree:"MS",name:"Epidemiology",
+tags:["investigative","analytical","STEM","data","independent","systematic","curious","science","detail","evidence"],
+desc:"Research-intensive thesis-based MS with deep methodological training. Ideal for students planning doctoral work. Recognized pathway by ASPPH and CDC epidemiology training programs.",
+careers:["Research Epidemiologist","Academic Researcher","PhD Candidate","Health Data Scientist"],
+skills:["Advanced epi methods","Thesis research","Statistical programming","Systematic reviews"],
+salary:"$60,000–$78,000 starting · $84,000–$120,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/graduate/ms"},
+{id:"ms_biostat",degree:"MS",name:"Biostatistics",
+tags:["analytical","math","data","STEM","independent","systematic","coding","technical","detail","evidence"],
+desc:"Thesis-based MS with rigorous statistical training. Strong foundation for doctoral programs or specialized research. Aligns with ASA biometrics standards.",
+careers:["Senior Biostatistician","Research Scientist","Clinical Data Analyst","Faculty Candidate"],
+skills:["Bayesian methods","Survival analysis","Statistical consulting","R/SAS/Python"],
+salary:"$65,000–$82,000 starting · $87,000–$132,000 mid-career",
+link:"https://publichealth.arizona.edu/programs/graduate/ms"},
+{id:"phd_epi",degree:"PhD",name:"Epidemiology",
+tags:["investigative","independent","analytical","STEM","curious","evidence","systematic","science","leadership","longterm"],
+desc:"Terminal research degree preparing independent researchers and faculty. Aligned with CDC/CSTE Applied Epidemiology Fellowship competency standards.",
+careers:["University Faculty","Senior Research Scientist","CDC/NIH Investigator","Epidemiology Division Director"],
+skills:["Original research design","Grant writing","Peer-reviewed publication","Advanced statistical methods"],
+salary:"$80,000–$100,000 starting · $112,000–$200,000+ mid-career",
+link:"https://publichealth.arizona.edu/programs/graduate/phd"},
+{id:"phd_biostat",degree:"PhD",name:"Biostatistics",
+tags:["analytical","math","independent","STEM","evidence","systematic","coding","technical","curious","longterm"],
+desc:"Terminal degree for statistical researchers in health. Trains future faculty and senior methodologists.",
+careers:["Biostatistics Faculty","Senior Biostatistician (pharma)","NIH/CDC Methodologist"],
+skills:["Statistical theory","Methodological research","Teaching","Grant writing"],
+salary:"$85,000–$105,000 starting · $112,000–$200,000+ mid-career",
+link:"https://publichealth.arizona.edu/programs/graduate/phd"},
+{id:"drph",degree:"DrPH",name:"Public Health Leadership",
+tags:["leadership","strategic","management","advocacy","experienced","bigpicture","systems","policy","collaborative","longterm"],
+desc:"Practice-oriented doctorate for experienced public health professionals focused on applied leadership and systems change. Aligned with ASPPH DrPH competency framework.",
+careers:["State/Local Health Officer","Senior NGO Director","VP of Population Health","Federal Agency Leader"],
+skills:["Executive leadership","Systems change","Applied research","Policy advocacy"],
+salary:"$90,000–$115,000 starting · $120,000–$200,000+ mid-career",
+link:"https://publichealth.arizona.edu/programs/graduate/drph"}
+],
+hp:[
+{id:"pa",degree:"Master of Physician Assistant Practice (MPAP)",name:"Physician Assistant Program",
+tags:["clinical","directcare","decisive","adaptable","science","STEM","people","empathy","procedures","breadth"],
+desc:"A 26-month graduate program preparing students for PA licensure. PAs conduct exams, diagnose illness, prescribe medications, and assist in surgery across specialties. Requires prior patient care experience.",
+careers:["Primary Care PA","Surgical PA","Emergency Medicine PA","Specialty PA (cardiology, orthopedics)","Rural Health PA"],
+skills:["Physical examination","Clinical diagnosis","Pharmacology","Patient communication","Procedural skills"],
+salary:"$105,000–$125,000 starting · $127,000–$160,000+ mid-career (AZ median: ~$127,000)",
+link:"https://healthprofessions.publichealth.arizona.edu/academics/physician-assistant-program"},
+{id:"dpt",degree:"Doctor of Physical Therapy (DPT)",name:"Physical Therapy Program",
+tags:["handson","clinical","movement","science","STEM","people","empathy","exercise","directcare","patient"],
+desc:"A doctoral program training physical therapists to evaluate and treat movement disorders, injuries, and disabilities. Combines intensive science with extensive clinical rotations.",
+careers:["Outpatient PT (orthopedics, sports)","Hospital/Acute Care PT","Pediatric PT","Neurological Rehab PT","School-Based PT"],
+skills:["Movement analysis","Manual therapy","Therapeutic exercise","Patient education","Clinical reasoning"],
+salary:"$72,000–$88,000 starting · $90,000–$110,000 mid-career (BLS median: $99,710)",
+link:"https://healthprofessions.publichealth.arizona.edu/academics/physical-therapy-program"},
+{id:"gc",degree:"MS in Genetic Counseling",name:"Genetic Counseling Graduate Program",
+tags:["science","STEM","empathy","communication","counseling","detail","investigative","patient","analytical","curious"],
+desc:"A two-year MS preparing students for board certification (ABGC). Combines genomic science with patient counseling. Highly competitive; requires genetics and counseling prerequisites.",
+careers:["Clinical Genetic Counselor (prenatal, cancer, rare disease)","Laboratory Genetic Counselor","Research Genetic Counselor","Telegenetics Counselor"],
+skills:["Genomic interpretation","Genetic risk assessment","Patient counseling","Medical communication","Clinical documentation"],
+salary:"$75,000–$90,000 starting · $90,000–$115,000 mid-career (national median: ~$92,000)",
+link:"https://healthprofessions.publichealth.arizona.edu/academics/genetic-counseling-program"},
+{id:"midwife",degree:"MS in Nurse-Midwifery",name:"Nurse-Midwifery Program",
+tags:["clinical","empathy","directcare","people","advocacy","nurturing","handson","inequity","patient","community"],
+desc:"A hybrid MS for Registered Nurses pursuing Certified Nurse-Midwife (CNM) credentials. Combines online coursework with campus intensives and supervised clinical placements. Rooted in reproductive justice and equitable access to maternal care.",
+careers:["Certified Nurse-Midwife (hospital, birth center, home birth)","Reproductive Health Clinician","Maternal Health Consultant","Rural Maternal Care Provider"],
+skills:["Antepartum and intrapartum care","Reproductive health counseling","Newborn assessment","Labor management","Culturally sensitive care"],
+salary:"$100,000–$115,000 starting · $120,000–$145,000 mid-career",
+link:"https://healthprofessions.publichealth.arizona.edu/academics/nurse-midwifery-program"},
+{id:"hsd",degree:"Graduate Certificate",name:"Health Sciences Design for Health Innovation",
+tags:["creative","design","innovative","systems","collaborative","bigpicture","technology","curious","visual","problemsolving"],
+desc:"A 9-unit interdisciplinary graduate certificate applying human-centered design thinking to complex health challenges. Open to graduate students across all disciplines. Features prototyping, digital fabrication, and field testing in the HSD Makerspace.",
+careers:["Health Innovation Designer","Medical Device Consultant","Health UX/Product Designer","Public Health Technology Specialist","Healthcare Systems Innovator"],
+skills:["Human-centered design","Design thinking","Rapid prototyping","Interprofessional collaboration","Health innovation methods"],
+salary:"$60,000–$85,000 starting · $80,000–$120,000 mid-career (varies by sector)",
+link:"https://healthprofessions.publichealth.arizona.edu/academics/hs-design/education/graduate-certificate"}
+]
+};
+var Q={
+ug:[
+{text:"When you are working on a group project, which role do you naturally gravitate toward?",
+opts:[
+{l:"I pull together the data and make sure our analysis is solid",t:["analytical","data","STEM","detail","systematic","investigative"]},
+{l:"I keep the team organized, on timeline, and moving forward",t:["organized","management","leadership","strategic","practical"]},
+{l:"I focus on understanding the people and communities we are trying to help",t:["people","empathy","community","collaborative","service"]},
+{l:"I zoom out and think about how all the big pieces connect",t:["bigpicture","systems","curious","strategic","policy"]},
+{l:"I handle the creative work — how we communicate and present our ideas",t:["communication","creative","teaching","outreach"]}
+]},
+{text:"Which of these sounds like a great workday to you?",
+opts:[
+{l:"Running an analysis that reveals a hidden pattern in a health dataset",t:["analytical","data","STEM","investigative","detail","math"]},
+{l:"Facilitating a workshop with community members on a health issue they face",t:["people","empathy","community","outreach","communication","collaborative"]},
+{l:"Writing a policy brief that could change how a health program gets funded",t:["policy","strategic","management","advocacy","bigpicture"]},
+{l:"Being out in the field — abroad, in nature, or in an underserved neighborhood",t:["outdoors","abroad","adaptable","curious","crosscultural"]},
+{l:"Teaching a health skill or designing a lesson for students or youth",t:["teaching","communication","nurturing","children","education","collaborative"]}
+]},
+{text:"A close friend tells you about a health crisis in a country you have never visited. What is your first instinct?",
+opts:[
+{l:"I want to understand the data — infection rates, who is most affected, and trends",t:["analytical","investigative","data","STEM","systematic","detail"]},
+{l:"I want to understand the root causes — poverty, policy failures, and structural inequities",t:["systems","bigpicture","policy","inequity","curious","evidence"]},
+{l:"I want to get there and work directly with the affected community",t:["abroad","crosscultural","community","empathy","adaptable","service"]},
+{l:"I want to understand the animal, environmental, or ecological factors involved",t:["animals","ecology","STEM","science","outdoors","investigative"]},
+{l:"I want to design a behavior-change program to reduce risk in the community",t:["communication","coaching","outreach","practical","collaborative","people"]}
+]},
+{text:"How do you prefer to spend your free time outside of school?",
+opts:[
+{l:"Solving puzzles, coding, or working with numbers and logic",t:["analytical","math","STEM","data","coding","systematic","independent"]},
+{l:"Volunteering, mentoring, or engaging with my local community",t:["people","empathy","service","community","collaborative","outreach"]},
+{l:"Hiking, gardening, wildlife watching, or spending time outdoors in nature",t:["outdoors","animals","ecology","science","curious"]},
+{l:"Traveling, learning languages, or immersing myself in different cultures",t:["abroad","crosscultural","adaptable","languages","curious","bigpicture"]},
+{l:"Designing, creating, crafting, or communicating ideas visually",t:["creative","visual","design","communication","innovative","curious"]}
+]},
+{text:"When you think about health inequity, which aspect motivates you most?",
+opts:[
+{l:"The data gap — we need better evidence on who is being left behind and why",t:["analytical","data","STEM","evidence","investigative","systematic"]},
+{l:"The structural causes — racism, poverty, and policy failures that create disparities",t:["inequity","advocacy","policy","bigpicture","systems","community"]},
+{l:"The direct human impact — people and families who cannot access care",t:["empathy","people","community","service","collaborative","nurturing"]},
+{l:"The environmental factors — pollution, contaminated water, toxic exposures",t:["STEM","science","outdoors","technical","regulation","investigative"]},
+{l:"The global dimension — disparities between nations and across borders",t:["abroad","crosscultural","bigpicture","systems","policy","curious"]}
+]},
+{text:"Which kind of problem-solving energizes you most?",
+opts:[
+{l:"Statistical or quantitative — I find answers in numbers and models",t:["analytical","math","STEM","data","detail","coding","systematic"]},
+{l:"Systems-level — I understand how all the moving parts fit together",t:["systems","bigpicture","strategic","policy","management","evidence"]},
+{l:"Human-centered — I understand what motivates people to change their behavior",t:["people","empathy","coaching","communication","community","collaborative"]},
+{l:"Experimental and hands-on — I test ideas in the real world",t:["outdoors","science","technical","practical","STEM","curious"]},
+{l:"Creative — I design new solutions or communicate ideas in new ways",t:["creative","visual","design","innovative","communication","teaching"]}
+]},
+{text:"How do you react when you are in an unfamiliar environment or uncertain situation?",
+opts:[
+{l:"I lean into it — I love adapting and figuring things out as I go",t:["adaptable","abroad","crosscultural","curious","collaborative"]},
+{l:"I want to gather the data and understand the context before I act",t:["analytical","systematic","detail","evidence","STEM","independent"]},
+{l:"I rely on relationships — I check in with others to navigate together",t:["collaborative","people","empathy","community","communication","service"]},
+{l:"I look for the rules, policies, or precedents that can guide the decision",t:["policy","management","systematic","organized","strategic","evidence"]}
+]},
+{text:"What matters most to you in a future career?",
+opts:[
+{l:"Making a measurable, evidence-based difference in population health",t:["analytical","evidence","STEM","data","systematic","investigative"]},
+{l:"Working directly with people, families, and communities every day",t:["people","empathy","community","collaborative","service","outreach"]},
+{l:"Advancing policy, legislation, or systemic change",t:["policy","advocacy","bigpicture","leadership","strategic","management"]},
+{l:"Working outdoors, in the field, or internationally",t:["outdoors","abroad","crosscultural","adaptable","science","curious"]},
+{l:"Applying creativity and innovation to health challenges",t:["creative","design","innovative","visual","curious","technology"]}
+]}
+],
+grad:[
+{text:"When you imagine your most meaningful contribution to public health, what does it look like?",
+opts:[
+{l:"Publishing research that changes clinical guidelines or public health policy",t:["evidence","analytical","independent","investigative","STEM","systematic"]},
+{l:"Running an agency, department, or program that serves a large population",t:["leadership","management","strategic","bigpicture","systems","experienced"]},
+{l:"Training communities and shifting health behaviors at scale",t:["people","empathy","community","collaborative","teaching","outreach"]},
+{l:"Investigating environmental or occupational hazards threatening communities",t:["STEM","science","technical","investigative","analytical","outdoors"]},
+{l:"Building statistical or data models that inform real health decisions",t:["analytical","data","math","STEM","coding","systematic","evidence"]},
+{l:"Improving health systems in under-resourced regions globally",t:["abroad","crosscultural","inequity","bigpicture","systems","curious"]}
+]},
+{text:"A colleague hands you a complex dataset on a health problem you care about. What is your first move?",
+opts:[
+{l:"I start exploring — I want to find the story hiding in the numbers",t:["analytical","data","math","STEM","detail","investigative","systematic"]},
+{l:"I ask what decisions this needs to inform and work backwards from the goal",t:["strategic","management","policy","evidence","bigpicture","leadership"]},
+{l:"I think about the population it represents and what their lived experience tells us",t:["people","empathy","community","inequity","evidence","curious"]},
+{l:"I look for patterns related to environmental exposures or biological mechanisms",t:["STEM","science","technical","investigative","analytical","detail"]}
+]},
+{text:"Which statement most honestly describes your professional identity right now?",
+opts:[
+{l:"Early-career or new graduate — I want to build rigorous technical and research skills",t:["analytical","STEM","data","evidence","systematic","independent"]},
+{l:"Early-career — I want to work in programs, communities, or health policy",t:["people","community","policy","collaborative","service","management"]},
+{l:"Mid-career professional — I want to move into senior leadership or program management",t:["leadership","management","strategic","experienced","bigpicture","longterm"]},
+{l:"Experienced professional — I want the highest practice credential for systems change",t:["leadership","advocacy","experienced","longterm","management","strategic"]}
+]},
+{text:"When you encounter a public health failure — an outbreak, a disparity, a policy gap — what is your instinct?",
+opts:[
+{l:"I want to investigate the root cause using rigorous epidemiological methods",t:["investigative","analytical","evidence","STEM","systematic","curious"]},
+{l:"I want to mobilize the community and change behavior at the grassroots",t:["people","community","empathy","outreach","collaborative","teaching"]},
+{l:"I want to fix the policy or system that allowed the failure to happen",t:["policy","advocacy","management","leadership","bigpicture","systems"]},
+{l:"I want to understand the environmental or biological mechanisms driving it",t:["science","STEM","technical","investigative","analytical","outdoors"]},
+{l:"I want to build a global or cross-border response to the problem",t:["abroad","crosscultural","bigpicture","systems","curious","adaptable"]}
+]},
+{text:"Which statement most honestly describes your relationship with statistics and data?",
+opts:[
+{l:"I genuinely enjoy statistical modeling — it is one of my core strengths",t:["analytical","math","STEM","data","coding","detail","systematic"]},
+{l:"I can interpret and use statistics, but it is not my primary passion",t:["evidence","management","policy","collaborative","community","practical"]},
+{l:"I strongly prefer qualitative, narrative, or community-based approaches",t:["people","empathy","community","crosscultural","communication","curious"]}
+]},
+{text:"How long are you willing to commit to graduate study?",
+opts:[
+{l:"One to two years — I want to build skills and enter the workforce quickly",t:["practical","management","policy","community","service","people"]},
+{l:"Two to three years — I want depth, a thesis, and strong research training",t:["evidence","analytical","STEM","systematic","independent","curious"]},
+{l:"Four to six years — I am committed to earning a doctorate",t:["independent","longterm","evidence","leadership","analytical","curious"]}
+]},
+{text:"Which kind of influence matters most to you in your career?",
+opts:[
+{l:"Scientific influence — my research shapes what practitioners and policymakers do",t:["evidence","analytical","independent","STEM","systematic","investigative"]},
+{l:"Organizational influence — I lead teams and shape programs from within institutions",t:["leadership","management","strategic","experienced","collaborative","bigpicture"]},
+{l:"Community influence — I build trust and change lives at the grassroots level",t:["people","empathy","community","outreach","service","collaborative"]},
+{l:"Policy influence — I shape laws, regulations, and public health funding",t:["policy","advocacy","bigpicture","management","leadership","strategic"]},
+{l:"Global influence — I work across borders, cultures, and health systems",t:["abroad","crosscultural","bigpicture","systems","curious","adaptable"]}
+]},
+{text:"When you picture yourself 15 years from now, which image fits best?",
+opts:[
+{l:"A tenured professor or senior research scientist with a lab and a body of published work",t:["independent","longterm","evidence","analytical","STEM","curious"]},
+{l:"A health commissioner, agency director, or senior policy leader",t:["leadership","management","strategic","experienced","bigpicture","longterm"]},
+{l:"A founder or director of a mission-driven community health organization",t:["community","empathy","collaborative","people","service","advocacy"]},
+{l:"A global health director leading programs across multiple countries",t:["abroad","crosscultural","bigpicture","leadership","systems","curious"]},
+{l:"A technical specialist leading an epi, environmental, or biostatistics program",t:["analytical","STEM","technical","evidence","systematic","investigative"]}
+]}
+],
+hp:[
+{text:"What draws you most powerfully to a career in healthcare?",
+opts:[
+{l:"I want to be the clinician who diagnoses, treats, and manages a patient across specialties",t:["clinical","directcare","decisive","people","science","breadth"]},
+{l:"I want to help patients recover movement, function, and independence through physical therapy",t:["handson","clinical","movement","exercise","people","empathy"]},
+{l:"I want to help individuals and families understand genetic risk and make informed decisions",t:["science","analytical","empathy","communication","counseling","detail"]},
+{l:"I want to be present with families through pregnancy, birth, and the newborn period",t:["clinical","directcare","empathy","nurturing","people","advocacy"]},
+{l:"I want to redesign healthcare tools and systems using human-centered design",t:["creative","design","innovative","systems","technology","curious"]}
+]},
+{text:"How would your closest friends describe you?",
+opts:[
+{l:"Decisive, quick-thinking, and comfortable managing uncertainty in high-stakes moments",t:["decisive","adaptable","clinical","breadth","directcare","science"]},
+{l:"Hands-on, patient, and naturally gifted at motivating people through physical challenge",t:["handson","empathy","movement","exercise","patient","directcare"]},
+{l:"Detail-oriented, empathetic, and a skilled listener in emotionally complex conversations",t:["detail","empathy","communication","counseling","analytical","patient"]},
+{l:"Nurturing, calm, and deeply passionate about reproductive and family health",t:["nurturing","empathy","advocacy","directcare","clinical","people"]},
+{l:"Creative, a systems thinker, always questioning why things are designed the way they are",t:["creative","design","innovative","systems","curious","technology"]}
+]},
+{text:"You have a free afternoon to learn something new in healthcare. Which sounds most exciting?",
+opts:[
+{l:"Shadow a PA or NP through a busy urgent care or specialty clinic",t:["clinical","directcare","decisive","breadth","science","adaptable"]},
+{l:"Attend a movement analysis workshop or study musculoskeletal anatomy in depth",t:["handson","movement","science","STEM","exercise","analytical"]},
+{l:"Read about CRISPR advances and how genomics is reshaping hereditary disease management",t:["science","STEM","analytical","detail","investigative","curious"]},
+{l:"Attend a community birth event or explore the history of midwifery in Indigenous communities",t:["nurturing","empathy","community","inequity","advocacy","clinical"]},
+{l:"Prototype a patient intake form redesign using design thinking tools",t:["creative","design","innovative","technology","curious","systems"]}
+]},
+{text:"Which clinical or professional environment fits you best?",
+opts:[
+{l:"High-acuity and fast-paced — different patients, specialties, and challenges every day",t:["decisive","adaptable","clinical","breadth","directcare","science"]},
+{l:"A consistent therapeutic relationship over weeks or months where I watch someone progress",t:["handson","empathy","patient","movement","directcare","people"]},
+{l:"One-on-one consultations centered on sensitive conversations and interpreting complex information",t:["counseling","empathy","detail","communication","analytical","patient"]},
+{l:"A birthing center, hospital labor and delivery unit, or home birth setting with families",t:["nurturing","directcare","clinical","empathy","people","handson"]},
+{l:"An interdisciplinary lab, design studio, or health innovation hub",t:["creative","design","collaborative","innovative","technology","systems"]}
+]},
+{text:"How do you feel about the biological and scientific dimension of your future work?",
+opts:[
+{l:"Clinical science energizes me — pharmacology, pathophysiology, and diagnostics are my strengths",t:["science","STEM","clinical","decisive","breadth","analytical"]},
+{l:"Biomechanics and functional anatomy fascinate me more than any other science",t:["science","STEM","handson","movement","exercise","analytical"]},
+{l:"Genomics and molecular biology are where I want to work at the frontier of medicine",t:["science","STEM","detail","analytical","investigative","curious"]},
+{l:"I am drawn to both the biological and social dimensions of reproductive and maternal health",t:["clinical","science","empathy","nurturing","community","people"]},
+{l:"I am most excited about applying biology and technology to design better health systems",t:["science","technology","creative","design","STEM","innovative"]}
+]},
+{text:"How do you feel about addressing healthcare disparities in rural and underserved Arizona communities?",
+opts:[
+{l:"I want to be a primary care provider in a rural or underserved setting — that is my calling",t:["clinical","directcare","community","inequity","adaptable","breadth"]},
+{l:"I want to bring physical rehabilitation services to people who currently cannot access them",t:["handson","movement","community","empathy","people","directcare"]},
+{l:"I want to expand genetic counseling access for underserved families navigating hereditary conditions",t:["counseling","science","inequity","community","empathy","communication"]},
+{l:"I want to directly address Arizona's maternal mortality crisis, especially for Indigenous women",t:["advocacy","inequity","nurturing","community","directcare","clinical"]},
+{l:"I want to redesign health tools and systems to be equitable and usable for all communities",t:["design","creative","systems","inequity","innovative","collaborative"]}
+]},
+{text:"Which academic or professional background best describes you?",
+opts:[
+{l:"Pre-health sciences track with clinical shadowing and patient care hours completed",t:["clinical","science","STEM","directcare","breadth","decisive"]},
+{l:"Kinesiology, exercise science, or physical therapy prerequisite coursework",t:["movement","science","STEM","handson","exercise","analytical"]},
+{l:"Biology, genetics, or molecular science with some counseling or psychology background",t:["science","STEM","analytical","counseling","detail","investigative"]},
+{l:"Active Registered Nurse (RN) interested in expanding into midwifery care",t:["clinical","directcare","nurturing","handson","empathy","patient"]},
+{l:"Graduate student in any discipline drawn to innovation at the intersection of health and design",t:["creative","design","innovative","curious","technology","systems"]}
+]},
+{text:"Where do you see yourself in ten years?",
+opts:[
+{l:"Running a clinical practice or specializing in a medical field where I hold prescriptive authority",t:["clinical","directcare","decisive","breadth","leadership","science"]},
+{l:"Owning a physical therapy practice or working in sports medicine or neurological rehabilitation",t:["handson","movement","leadership","exercise","empathy","directcare"]},
+{l:"Leading a genetics clinic, working at a cancer center, or doing translational genomics research",t:["science","analytical","investigative","detail","clinical","STEM"]},
+{l:"A nationally recognized CNM advocating for reproductive justice and equitable birth outcomes",t:["nurturing","advocacy","inequity","directcare","clinical","community"]},
+{l:"Founding a health innovation company or leading a design team inside a major health system",t:["design","creative","leadership","innovative","systems","technology"]}
+]}
+]
+};
+var S={track:null,qi:0,answers:[]};
+function showScreen(id){
+  var all=document.querySelectorAll('.screen');
+  for(var i=0;i<all.length;i++) all[i].classList.remove('active');
+  document.getElementById('screen-'+id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function setProgress(show,cur,tot){
+  var bar=document.getElementById('progressBar');
+  if(!show){bar.style.display='none';return;}
+  bar.style.display='block';
+  document.getElementById('progFill').style.width=(tot>0?((cur-1)/tot)*100:0)+'%';
+  document.getElementById('progLabel').textContent='Question '+cur;
+  document.getElementById('progCount').textContent=cur+' / '+tot;
+}
+function score(ptags,answers){
+  var freq={};
+  for(var a=0;a<answers.length;a++){
+    var at=answers[a]||[];
+    for(var t=0;t<at.length;t++) freq[at[t]]=(freq[at[t]]||0)+1;
+  }
+  var s=0;
+  for(var p=0;p<ptags.length;p++) if(freq[ptags[p]]) s+=freq[ptags[p]];
+  var max=ptags.length*answers.length;
+  if(max===0) return 10;
+  return Math.min(99,Math.max(8,Math.round((s/max)*100*2.6)));
+}
+function rankProgs(answers,progs){
+  var out=[];
+  for(var i=0;i<progs.length;i++) out.push({p:progs[i],pct:score(progs[i].tags,answers)});
+  out.sort(function(a,b){return b.pct-a.pct;});
+  return out;
+}
+function renderQ(){
+  var qs=Q[S.track],q=qs[S.qi],tot=qs.length,cur=S.qi+1;
+  setProgress(true,cur,tot);
+  var mount=document.getElementById('questionMount');
+  mount.innerHTML='';
+  var card=document.createElement('div');card.className='question-card';
+  var num=document.createElement('div');num.className='q-number';
+  num.textContent='Question '+cur+' of '+tot;card.appendChild(num);
+  var qt=document.createElement('div');qt.className='q-text';qt.textContent=q.text;card.appendChild(qt);
+  var list=document.createElement('div');list.className='options-list';
+  var saved=S.answers[S.qi]||null;
+  for(var i=0;i<q.opts.length;i++){
+    (function(opt){
+      var btn=document.createElement('button');btn.className='option-btn';btn.textContent=opt.l;btn.setAttribute('type','button');
+      if(saved&&JSON.stringify(saved)===JSON.stringify(opt.t)) btn.classList.add('selected');
+      btn.addEventListener('click',function(){
+        var all=list.querySelectorAll('.option-btn');
+        for(var b=0;b<all.length;b++) all[b].classList.remove('selected');
+        btn.classList.add('selected');
+        S.answers[S.qi]=opt.t;
+        document.getElementById('btnNext').disabled=false;
+      });
+      list.appendChild(btn);
+    })(q.opts[i]);
+  }
+  card.appendChild(list);mount.appendChild(card);
+  var bn=document.getElementById('btnNext');
+  bn.disabled=!S.answers[S.qi];
+  bn.textContent=(S.qi===tot-1)?'See My Results \u2192':'Next \u2192';
+  document.getElementById('btnBack').style.display=S.qi===0?'none':'inline-block';
+}
+function renderResults(){
+  var progs=P[S.track];
+  var valid=S.answers.filter(function(a){return a&&a.length>0;});
+  var ranked=rankProgs(valid,progs);
+  var labels={ug:'Undergraduate Results',grad:'Graduate Results',hp:'Health Professions Results'};
+  var tcss={ug:'background:#0C234B;color:#fff',grad:'background:#AB0520;color:#fff',hp:'background:#1a6b3c;color:#fff'};
+  document.getElementById('resTag').textContent=labels[S.track];
+  document.getElementById('resTag').style.cssText=tcss[S.track];
+  document.getElementById('resSubhead').textContent=ranked.length+' programs ranked by fit. Click any card to explore details.';
+  var mount=document.getElementById('resultsMount');mount.innerHTML='';
+  for(var i=0;i<ranked.length;i++){
+    (function(item,rnk){
+      var rc=rnk===0?'rank-1':rnk===1?'rank-2':rnk===2?'rank-3':'rank-other';
+      var card=document.createElement('div');card.className='result-card '+rc;
+      var hdr=document.createElement('div');hdr.className='result-card-header';hdr.setAttribute('role','button');hdr.setAttribute('tabindex','0');
+      var rn=document.createElement('div');rn.className='rank-num';rn.textContent='#'+(rnk+1);
+      var info=document.createElement('div');info.className='result-info';
+      var dt=document.createElement('div');dt.className='result-degree-type';dt.textContent=item.p.degree;
+      var dn=document.createElement('div');dn.className='result-name';dn.textContent=item.p.name;
+      var mr=document.createElement('div');mr.className='match-row';
+      var tr=document.createElement('div');tr.className='match-track';
+      var fl=document.createElement('div');fl.className='match-fill';fl.style.width='0%';fl.setAttribute('data-pct',item.pct);
+      tr.appendChild(fl);
+      var pl=document.createElement('div');pl.className='match-pct';pl.textContent=item.pct+'%';
+      mr.appendChild(tr);mr.appendChild(pl);
+      info.appendChild(dt);info.appendChild(dn);info.appendChild(mr);
+      hdr.appendChild(rn);hdr.appendChild(info);card.appendChild(hdr);
+      var eb=document.createElement('button');eb.className='result-expand-btn';eb.setAttribute('type','button');
+      eb.innerHTML='<span class="expand-arrow">\u25ba</span> View Details, Careers &amp; Salary';
+      card.appendChild(eb);
+      var det=document.createElement('div');det.className='result-detail';
+      var sb=document.createElement('div');sb.className='salary-badge';sb.textContent='\ud83d\udcb0 '+item.p.salary;
+      det.appendChild(sb);
+      function addSec(title,content,isHtml){
+        var t=document.createElement('div');t.className='detail-title';t.textContent=title;det.appendChild(t);
+        if(isHtml){var d=document.createElement('div');d.innerHTML=content;det.appendChild(d);}
+        else{var p=document.createElement('p');p.textContent=content;det.appendChild(p);}
+      }
+      addSec('About this program',item.p.desc,false);
+      addSec('Typical career paths','<ul>'+item.p.careers.map(function(c){return'<li>'+c+'</li>';}).join('')+'</ul>',true);
+      addSec('Key skills developed','<ul>'+item.p.skills.map(function(s){return'<li>'+s+'</li>';}).join('')+'</ul>',true);
+      addSec('Learn more','<a href="'+item.p.link+'" target="_blank" rel="noopener noreferrer">Visit official program page \u2192</a>',true);
+      card.appendChild(det);
+      function toggle(){var open=det.classList.toggle('open');eb.classList.toggle('open',open);}
+      eb.addEventListener('click',toggle);
+      hdr.addEventListener('click',toggle);
+      hdr.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle();}});
+      mount.appendChild(card);
+    })(ranked[i],i);
+  }
+  setTimeout(function(){
+    var fills=mount.querySelectorAll('.match-fill');
+    for(var f=0;f<fills.length;f++) fills[f].style.width=fills[f].getAttribute('data-pct')+'%';
+  },120);
+}
+function startTrack(track){
+  S.track=track;S.qi=0;S.answers=[];
+  var tags={ug:'Undergraduate',grad:'Graduate',hp:'Health Professions'};
+  var titles={ug:'Tell us how you think and what drives you',grad:'Tell us about your goals and professional identity',hp:'Tell us about your clinical interests and strengths'};
+  var tcss={ug:'background:#0C234B;color:#fff',grad:'background:#AB0520;color:#fff',hp:'background:#1a6b3c;color:#fff'};
+  document.getElementById('qTrackTag').textContent=tags[track];
+  document.getElementById('qTrackTag').style.cssText=tcss[track];
+  document.getElementById('qTitle').textContent=titles[track];
+  showScreen('questions');renderQ();
+}
+function goNext(){
+  if(!S.answers[S.qi]) return;
+  if(S.qi<Q[S.track].length-1){S.qi++;renderQ();}
+  else{showScreen('loading');setProgress(false);setTimeout(function(){renderResults();showScreen('results');},900);}
+}
+function goBack(){if(S.qi>0){S.qi--;renderQ();}}
+function restart(){S={track:null,qi:0,answers:[]};setProgress(false);showScreen('landing');}
+function otherTrack(){S.qi=0;S.answers=[];setProgress(false);showScreen('landing');}
+function init(){
+  document.getElementById('btn-ug').addEventListener('click',function(){startTrack('ug');});
+  document.getElementById('btn-grad').addEventListener('click',function(){startTrack('grad');});
+  document.getElementById('btn-hp').addEventListener('click',function(){startTrack('hp');});
+  document.getElementById('btnNext').addEventListener('click',goNext);
+  document.getElementById('btnBack').addEventListener('click',goBack);
+  document.getElementById('btnRestart').addEventListener('click',restart);
+  document.getElementById('btnOtherTrack').addEventListener('click',otherTrack);
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+else init();
+})();
+</script>
+</body>
+</html>
